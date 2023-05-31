@@ -75,6 +75,11 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 SECRET_KEY = 123123123123
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+      'users.authentication.JWTAuthentication'
+    ]
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
