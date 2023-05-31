@@ -27,3 +27,15 @@ class LoginView(APIView):
         dt = datetime.now() + timedelta(days=7)
         token = jwt.encode({ 'sub': user_to_login.id, 'exp': int(dt.strftime('%s'), settings.SECRET_KEY, algorithm='HS256')})
         return Response({ 'message' : f'welcome back {user_to_login.username}', 'token': token })
+
+class RegisterView(APIView):
+    
+    # REGISTER ROUTE
+    # Endpoint: POST /api/auth/register/
+
+    @exceptions
+    def post(self, request):
+        user_to_add = UserSerializer(data=request.data)
+        user_to_add.is_valid(raise_exception=True)
+        user_to_add.save()
+        return Response(user_to_add.data, status.HTTP_201_CREATED)
