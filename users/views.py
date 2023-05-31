@@ -1,3 +1,29 @@
 from django.shortcuts import render
+from django.contrib.auth import get_user_model
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
+
+from django.conf import settings
+
+# for token production
+import jwt
+from datetime import datetime, timedelta
+User = get_user_model()
 
 # Create your views here.
+
+
+
+class LoginView(APIView):
+    def post(self,request):
+        email = request.data['email']
+        password = request.data['password']
+        user_to_login = User.object.get(email=email)
+        if not user_to_login.check_password(password) :
+            print('password do not match')
+            raise PermissionDenied('Unauthorized')
+        dt = datetime.now() + timedelta(days=7)
+        token = jwt.encode({ 'sub': user_to_login.id, 'exp': int(dt.strftime('%s'), settings.SECRET_KEY, algorithm='HS256')})
+        return Response({ 'message' : f'welcome back {user_to_login.username}', 'token': token })

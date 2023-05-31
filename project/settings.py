@@ -73,6 +73,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
+SECRET_KEY = 123123123123
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
