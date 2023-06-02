@@ -1,29 +1,42 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-
-from ..lib.exceptions import exceptions
+from .serializers.common import LikedEventSerializer
 
 from .models import Liked_event
-from .serializers.common import UserSerializer
+from lib.exceptions import exceptions
 
-# Create your views here.
-
-class LikedSingleView(APIView):
+# api/liked/
+class LikedEventListView(APIView):
+    
     permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    @exceptions
+    def get(self, request):
+        liked_event = Liked_event.objects.all()
+        serialized_liked_event = LikedEventSerializer(liked_event, many=True)
+        return Response(serialized_liked_event.data)
+    
+# api/liked/:id
+class LikedEventDetailView(APIView):
+    
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    @exceptions
+    def put(self, request, pk):
+        LikedEvent = Liked_event.objects.get(pk=pk)
+        serialized_liked_event = LikedEventSerializer(LikedEvent, request.data)
+        # if serialized_liked_event() {
+        #     serialized_liked_event.remove()
+        # } else {
+        #     serialized_liked_event.append()
+        # }
+    
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
     @exceptions
     def get (self,request,pk):
         event_to_serialize = Liked_event.objects.get(pk=pk)
-        serialized_event = UserSerializer(event_to_serialize)
+        serialized_event = LikedEventSerializer(event_to_serialize)
         return Response(serialized_event.data)
-
-
-
-class LikedListView(APIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-    @exceptions
-    def get (self,request):
-        all_liked_events = Liked_event.objects.all()
-        serialized_liked_events = UserSerializer(all_liked_events)
-        return Response (serialized_liked_events.data)
