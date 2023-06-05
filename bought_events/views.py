@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from lib.exceptions import exceptions
@@ -27,3 +28,10 @@ class BoughtListView(APIView):
         all_bought_events = Bought_event.objects.all()
         serialized_bought_events = BoughtEventSerializer(all_bought_events, many=True)
         return Response (serialized_bought_events.data)
+
+    @exceptions
+    def post (self,request):
+        bought_events = BoughtEventSerializer(data={ **request.data })
+        bought_events.is_valid(raise_exception=True)
+        bought_events.save()
+        return Response(bought_events.data, status.HTTP_201_CREATED)
