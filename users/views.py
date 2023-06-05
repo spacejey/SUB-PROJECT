@@ -71,14 +71,13 @@ class UserSingleView(APIView):
     def put(self, request, pk):
         user = User.objects.get(pk=pk)
         serialized_user = UserEventsSerializer(user)
-        print(serialized_user.data)
-        bought_events = serialized_user.data['bought_events']
-        for event in request.data['bought_events']:
+        bought_events = serialized_user.data['bought']
+        for event in request.data['bought']:
             if event in bought_events:
               bought_events.remove(event)
             else:
               bought_events.append(event)
-        serialized_bought_event = UserBoughtEventSerializer( user, { 'bought_events' : bought_events }, partial=True)
+        serialized_bought_event = UserBoughtEventSerializer( user, { 'bought' : bought_events }, partial=True)
         serialized_bought_event.is_valid(raise_exception=True)
         serialized_bought_event.save()
         return Response(serialized_user.data)
