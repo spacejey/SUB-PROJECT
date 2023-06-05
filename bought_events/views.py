@@ -25,5 +25,5 @@ class BoughtListView(APIView):
     @exceptions
     def get (self,request):
         all_bought_events = Bought_event.objects.all()
-        serialized_bought_events = BoughtEventSerializer(all_bought_events)
+        serialized_bought_events = BoughtEventSerializer(all_bought_events, many=True)
         return Response (serialized_bought_events.data)
