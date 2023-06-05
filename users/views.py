@@ -72,8 +72,8 @@ class UserSingleView(APIView):
         user = User.objects.get(pk=pk)
         serialized_user = PopulatedUserSerializer(user)
         bought_events = serialized_user.data['bought_events']
-        for user in request.data:
-            print( user.bought_events )
+        for bought_events in request.data['bought_events']:
+            print(bought_events)
         #     if event in bought_events:
         #       print(event)
         #     else:
