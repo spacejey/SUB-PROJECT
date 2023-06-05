@@ -24,18 +24,6 @@ class LikedEventDetailView(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     @exceptions
-    def put(self, request, pk):
-        LikedEvent = Liked_event.objects.get(pk=pk)
-        serialized_liked_event = LikedEventSerializer(LikedEvent, request.data)
-        # if serialized_liked_event() {
-        #     serialized_liked_event.remove()
-        # } else {
-        #     serialized_liked_event.append()
-        # }
-    
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    @exceptions
     def get (self,request,pk):
         event_to_serialize = Liked_event.objects.get(pk=pk)
         serialized_event = LikedEventSerializer(event_to_serialize)

@@ -57,3 +57,24 @@ class UsersListView(APIView):
         users = User.objects.all()
         serialized_users =  PopulatedUserSerializer(users, many=True)
         return Response(serialized_users.data)
+    
+class UserSingleView(APIView):
+    
+    @exceptions
+
+    def get(self,request,pk):
+        user = User.objects.get(pk=pk)
+        serialized_user = PopulatedUserSerializer(user)
+        return Response(serialized_user.data)
+    
+    @exceptions
+    def put(self, request, pk):
+        user = User.objects.get(pk=pk)
+        serialized_user = PopulatedUserSerializer(user)
+        bought_events = serialized_user.data['bought_events']
+        for user in request.data:
+            print( user.bought_events )
+        #     if event in bought_events:
+        #       print(event)
+        #     else:
+        #         print('fail')
