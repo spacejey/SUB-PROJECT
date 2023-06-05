@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from .serializers.common import UserSerializer, UserEventsSerializer, UserBoughtEventSerializer
+from .serializers.common import UserSerializer, UserEventsSerializer, UserBoughtEventSerializer, UserLikedEventSerializer
 from .serializers.populated import PopulatedUserSerializer
 from rest_framework.exceptions import PermissionDenied
 from lib.exceptions import exceptions
@@ -21,7 +21,7 @@ User = get_user_model()
 
 
 class LoginView(APIView):
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     @exceptions
     def post(self,request):
@@ -36,7 +36,7 @@ class LoginView(APIView):
         return Response({ 'message' : f'welcome back {user_to_login.username}', 'token': token })
 
 class RegisterView(APIView):
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     
     # REGISTER ROUTE
     # Endpoint: POST /api/auth/register/
@@ -71,18 +71,27 @@ class UserSingleView(APIView):
     def put(self, request, pk):
         user = User.objects.get(pk=pk)
         serialized_user = UserEventsSerializer(user)
-        print(serialized_user.data)
-        bought_events = serialized_user.data['bought_events']
-        for event in request.data['bought_events']:
-            if event in bought_events:
-              bought_events.remove(event)
-            else:
+        bought_events = serialized_user.data['bought']
+        liked_events = serialized_user.data['liked']
+        if 'bought' in request.data:
+          print('bought')
+          for event in request.data['bought']:
+              if event in bought_events:
+                bought_events.remove(event)
+              else:
                 bought_events.append(event)
-                print('FAIL=>', bought_events)
-        print('CHANGED!!!', serialized_user.data)
-        
-        serialized_bought_event = UserBoughtEventSerializer( user, { 'bought_events' : bought_events }, partial=True)
-        serialized_bought_event.is_valid(raise_exception=True)
-        serialized_bought_event.save()
-        print('FINAL DATA=>', serialized_bought_event.data)
-        return Response(serialized_bought_event.data)
+          serialized_bought_event = UserBoughtEventSerializer( user, { 'bought' : bought_events }, partial=True)
+          serialized_bought_event.is_valid(raise_exception=True)
+          serialized_bought_event.save()
+        if 'liked' in request.data :
+          print('liked')
+          for event in request.data['liked']:
+            if event in liked_events:
+              liked_events.remove(event)
+            else:
+              liked_events.append(event)
+        serialized_liked_event = UserLikedEventSerializer( user, { 'liked' : liked_events }, partial=True)
+        serialized_liked_event.is_valid(raise_exception=True)
+        serialized_liked_event.save()
+        return Response(serialized_user.data)
+    
