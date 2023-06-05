@@ -76,11 +76,9 @@ class UserSingleView(APIView):
         for event in request.data['bought_events']:
             if event in bought_events:
               bought_events.remove(event)
-              print(bought_events)
             else:
-                bought_events.append(event)
-                print(bought_events)
+              bought_events.append(event)
         serialized_bought_event = UserBoughtEventSerializer( user, { 'bought_events' : bought_events }, partial=True)
         serialized_bought_event.is_valid(raise_exception=True)
         serialized_bought_event.save()
-        return Response(serialized_bought_event.data)
+        return Response(serialized_user.data)
