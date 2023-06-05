@@ -20,7 +20,7 @@ User = get_user_model()
 
 
 class LoginView(APIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
 
     @exceptions
     def post(self,request):
@@ -35,7 +35,7 @@ class LoginView(APIView):
         return Response({ 'message' : f'welcome back {user_to_login.username}', 'token': token })
 
 class RegisterView(APIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
     
     # REGISTER ROUTE
     # Endpoint: POST /api/auth/register/
