@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from .serializers.common import UserSerializer
+from .serializers.common import UserSerializer, UserEventsSerializer, UserBoughtEventSerializer
 from .serializers.populated import PopulatedUserSerializer
 from rest_framework.exceptions import PermissionDenied
 from lib.exceptions import exceptions
@@ -70,11 +70,17 @@ class UserSingleView(APIView):
     @exceptions
     def put(self, request, pk):
         user = User.objects.get(pk=pk)
-        serialized_user = PopulatedUserSerializer(user)
+        serialized_user = UserEventsSerializer(user)
+        print(serialized_user.data)
         bought_events = serialized_user.data['bought_events']
-        for user in request.data:
-            print( user.bought_events )
-        #     if event in bought_events:
-        #       print(event)
-        #     else:
-        #         print('fail')
+        for event in request.data['bought_events']:
+            if event in bought_events:
+              bought_events.remove(event)
+              print(bought_events)
+            else:
+                bought_events.append(event)
+                print(bought_events)
+        serialized_bought_event = UserBoughtEventSerializer( user, { 'bought_events' : bought_events }, partial=True)
+        serialized_bought_event.is_valid(raise_exception=True)
+        serialized_bought_event.save()
+        return Response(serialized_bought_event.data)

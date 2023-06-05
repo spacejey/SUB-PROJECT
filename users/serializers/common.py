@@ -28,3 +28,9 @@ class UserEventsSerializer(serializers.ModelSerializer):
     class Meta: 
       fields = ('id', 'username', 'email', 'bought_events', 'liked_events')
       model = User
+
+class UserBoughtEventSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        fields = ( 'bought_events',)
+        model= User
