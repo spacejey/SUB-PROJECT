@@ -34,3 +34,11 @@ class UserBoughtEventSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ( 'bought',)
         model= User
+
+class UserLikedEventSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        fields = ( 'liked',)
+        model= User
+
+
