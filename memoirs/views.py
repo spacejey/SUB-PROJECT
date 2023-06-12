@@ -24,6 +24,13 @@ class MemoirView(APIView):
 
 #DELETE
 
+#POST
 class MemoirPostView(APIView):
     pass
-#POST
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    @exceptions
+    def post (self, request):
+        memoirs = MemoirSerializer(data={**request.data})
+        memoirs.is_valid(raise_exception=True)
+        memoirs.save()
+        return Response(memoirs.data, status.HTTP_201_CREATED)
