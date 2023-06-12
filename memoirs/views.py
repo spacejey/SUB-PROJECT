@@ -31,7 +31,7 @@ class MemoirView(APIView):
 
 #POST
 class MemoirPostView(APIView):
-    pass
+    
     permission_classes = (IsAuthenticatedOrReadOnly,)
     @exceptions
     def post (self, request):
