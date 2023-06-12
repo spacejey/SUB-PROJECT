@@ -15,7 +15,7 @@ class MemoirView(APIView):
 
     @exceptions
     def put(self, request, pk):
-        memoir = Memoir.object.get(pk=pk)
+        memoir = Memoir.objects.get(pk=pk)
         serialized_memoir = MemoirSerializer(memoir, request.data)
         serialized_memoir.is_valid(raise_exception=True)
         serialized_memoir.save()
