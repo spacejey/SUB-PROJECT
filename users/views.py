@@ -21,7 +21,6 @@ User = get_user_model()
 
 
 class LoginView(APIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     @exceptions
     def post(self,request):
@@ -36,7 +35,6 @@ class LoginView(APIView):
         return Response({ 'message' : f'welcome back {user_to_login.username}', 'token': token })
 
 class RegisterView(APIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
     
     # REGISTER ROUTE
     # Endpoint: POST /api/auth/register/
@@ -80,7 +78,7 @@ class UserSingleView(APIView):
                 bought_events.remove(event)
               else:
                 bought_events.append(event)
-          serialized_bought_event = UserBoughtEventSerializer( user, { 'bought' : bought_events }, partial=True)
+          serialized_bought_event = UserEventsSerializer( user, { 'bought' : bought_events }, partial=True)
           serialized_bought_event.is_valid(raise_exception=True)
           serialized_bought_event.save()
         if 'liked' in request.data :
@@ -90,7 +88,7 @@ class UserSingleView(APIView):
               liked_events.remove(event)
             else:
               liked_events.append(event)
-        serialized_liked_event = UserLikedEventSerializer( user, { 'liked' : liked_events }, partial=True)
+        serialized_liked_event = UserEventsSerializer( user, { 'liked' : liked_events }, partial=True)
         serialized_liked_event.is_valid(raise_exception=True)
         serialized_liked_event.save()
         return Response(serialized_user.data)
