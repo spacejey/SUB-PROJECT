@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 from django.core.exceptions import ImproperlyConfigured
 from rest_framework import status
-from bought_events.models import Bought_event
-from liked_events.models import Liked_event
+from events.models import Event
+# from liked_events.models import Liked_event
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -17,7 +17,7 @@ def exceptions(func):
             print(e.__class__.__name__)
             print(e)
             return Response({ 'detail' : 'Unauthurized' }, status.HTTP_403_FORBIDDEN)
-        except (NotFound, Bought_event.DoesNotExist, Liked_event.DoesNotExist) as e:
+        except (NotFound, Event.DoesNotExist) as e:
             print(e.__class__.__name__)
             print(e)
             return Response(e.__dict__ if e.__dict__ else { 'detail' : str(e) }, status.HTTP_404_NOT_FOUND)
