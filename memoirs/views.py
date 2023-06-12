@@ -23,6 +23,11 @@ class MemoirView(APIView):
         return Response(serialized_memoir.data)
 
 #DELETE
+    @exceptions
+    def delete(self, request, pk):
+        memoir = Memoir.objects.get(pk=pk)
+        memoir.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class MemoirPostView(APIView):
     pass
