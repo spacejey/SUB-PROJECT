@@ -1,0 +1,35 @@
+[
+{
+  "model": "bought_events.bought_event",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "name": "bought_event_1",
+    "date": "2023-06-19T17:05:00Z",
+    "image": "https://res.cloudinary.com/dpulji3ct/image/upload/v1685725393/Sub-Project/Screenshot_2023-06-02_at_18.02.38_biyiol.png",
+    "text": "test_review_or_comment"
+  }
+},
+{
+  "model": "bought_events.bought_event",
+  "pk": 2,
+  "fields": {
+    "user": 1,
+    "name": "bought_event_2",
+    "date": "2023-06-17T17:05:45Z",
+    "image": "https://res.cloudinary.com/dpulji3ct/image/upload/v1685725440/Sub-Project/Screenshot_2023-06-02_at_18.03.56_n9kkhe.png",
+    "text": "test_review_or_comment2"
+  }
+},
+{
+  "model": "bought_events.bought_event",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "name": "bought_event_3",
+    "date": "2023-06-22T17:06:25Z",
+    "image": "https://res.cloudinary.com/dpulji3ct/image/upload/v1685725470/Sub-Project/Screenshot_2023-06-02_at_18.04.27_odu1fx.png",
+    "text": "test_review_or_comment3"
+  }
+}
+]

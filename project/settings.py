@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'users',
-    'liked_events',
-    'bought_events'
+    'events',
+    'memoirs'
 ]
 
 MIDDLEWARE = [
