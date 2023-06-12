@@ -1,7 +1,7 @@
 from events.serializers.common import EventSerializer
-# from liked_events.serializers.common import LikedEventSerializer
+from memoirs.serializers.common import MemoirSerializer
 from .common import UserEventsSerializer
 
 class PopulatedUserSerializer(UserEventsSerializer):
     bought= EventSerializer(many=True)
-    # liked= LikedEventSerializer(many=True)
+    memoirs= MemoirSerializer(many=True)
