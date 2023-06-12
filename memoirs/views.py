@@ -22,7 +22,8 @@ class MemoirView(APIView):
         print('MEMOIR PUT IS PRINTED')
         return Response(serialized_memoir.data)
 
-
-#POST
-
 #DELETE
+
+class MemoirPostView(APIView):
+    pass
+#POST
