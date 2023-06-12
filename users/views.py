@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from .serializers.common import UserSerializer, UserEventsSerializer, UserBoughtEventSerializer
+from .serializers.common import UserSerializer, UserEventsSerializer
 from .serializers.populated import PopulatedUserSerializer
 from rest_framework.exceptions import PermissionDenied
 from lib.exceptions import exceptions
