@@ -4,4 +4,5 @@ from .common import UserEventsSerializer
 
 class PopulatedUserSerializer(UserEventsSerializer):
     bought= EventSerializer(many=True)
+    liked= EventSerializer(many=True)
     memoirs= MemoirSerializer(many=True)
