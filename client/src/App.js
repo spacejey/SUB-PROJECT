@@ -1,11 +1,12 @@
 import { useEffect } from 'react'
 import axios from 'axios'
+import 'dotenv/config'
 
 // Components
-import Home from './components/main/Home'
+import Events from './components/main/Events'
 import Login from './components/auth/Login'
 import Register from './components/auth/Register'
-import Search from './components/main/Search'
+import Calendar from './components/main/Calendar'
 import NavBar from './components/common/Navbar'
 
 // Bootstrap
@@ -15,7 +16,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 const App = () => {
   useEffect(() => {
     const getData = async () => {
-      const { data } = await axios.get('/api/events/')
+      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}`)
       console.log(data)
     }
     getData()
@@ -24,12 +25,12 @@ const App = () => {
   return (
     <div className='site-wrapper'>
       <BrowserRouter>
-        {/* <NavBar /> */}
+        <NavBar />
         <Routes>
-          <Route path='/' element={<Home />} />
+          <Route path='/' element={<Events />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/search' element={<Search />} />
+          <Route path='/calendar' element={<Calendar />} />
         </Routes>
       </BrowserRouter>
     </div>
