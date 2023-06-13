@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import axios from 'axios'
-import 'dotenv/config'
+// import 'dotenv/config'
 
 // Components
 import Events from './components/main/Events'
