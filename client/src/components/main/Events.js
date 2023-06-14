@@ -4,10 +4,18 @@ import { useEffect, useState } from 'react'
 const Events = () => {
   const [events, setEvents] = useState([])
 
+  // Form 
+  const [ formFields, setFormFields] = useState( {
+    artist: '',
+    venue: '' ,
+    date: '',
+    genre: '',
+    location: '',
+  })
+
   // Pagination
-  const [totalPages, setTotalPages] = useState([1,2,3])
-  const [pages, setPages] = useState([])
-  const [currentPage, setCurrentPage] = useState('')
+  const [totalPages, setTotalPages] = useState([])
+  const [pages, setPages] = useState([1,2,3])
 
   useEffect(() => {
     const getData = async () => {
@@ -15,13 +23,23 @@ const Events = () => {
         const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&apikey=${process.env.REACT_APP_API_KEY}`)
         console.log('data =>', data)
         setEvents(data._embedded.events)
-        setTotalPages(data.page.totalPages)
+        if (data.page.totalPages < 49 ) {
+          setTotalPages(data.page.totalPages)
+        } else {
+          setTotalPages(49)
+        }
       } catch (error) {
         console.log(error)
       }
     }
     getData()
   }, [])
+
+  // Search Form
+
+
+
+  // Pagination Executions 
 
   const pageNumbers = (total, current) => {
     if (current === total) {
@@ -33,14 +51,21 @@ const Events = () => {
 
   const handlePage = async (e) => {
     try {
+      console.log(typeof e.target.value)
       const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&page=${e.target.value}&apikey=${process.env.REACT_APP_API_KEY}`)
       setEvents(data._embedded.events)
     } catch (error) {
       console.log(error)
     }
-    pageNumbers( totalPages, e.target.value)
+    pageNumbers( totalPages, parseInt(e.target.value))
   }
-  console.log(events)
+
+  const sendToFirstPage = async() => {
+    const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&apikey=${process.env.REACT_APP_API_KEY}`)
+    setEvents(data._embedded.events)
+    setPages([1,2,3])
+  }
+
 
   return (
     <>
@@ -53,10 +78,12 @@ const Events = () => {
         </div>
       ))} 
       <div id='page-numbers'>
+        { !pages.includes(1) && <button onClick={() => sendToFirstPage()}> First Page </button>}
+        
         {
-          pages.map(page => {
-            <button onClick={(e) => handlePage(e)} value = {page}> {page} </button>
-          })
+          pages.map((page,i) => 
+            <button key={i} onClick={(e) => handlePage(e)} value = {page}> {page} </button>
+          )
         }
       </div>
     </>
