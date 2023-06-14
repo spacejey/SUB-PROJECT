@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 // Bootstrap
 import Button from 'react-bootstrap/Button'
@@ -14,6 +14,11 @@ import Error from '../common/Error'
 import { removeToken, isAuthenticated } from '../../helpers/auth'
 
 const NavBar = () => {
+  const location = useLocation()
+
+  useEffect(() => {
+    console.log(location)
+  }, [location])
 
   const handleLogout = () => {
     removeToken()
