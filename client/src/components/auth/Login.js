@@ -30,6 +30,7 @@ const Login = () => {
     try {
       const { data } = await axios.post('/api/users/auth/login/', formFields)
       localStorage.setItem('SUB-PROJECT', data.token)
+      console.log('data.token=>', data.token)
       navigate('/calendar')
     } catch (err) {
       console.log(err)
