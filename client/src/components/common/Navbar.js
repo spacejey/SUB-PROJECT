@@ -17,7 +17,6 @@ const NavBar = () => {
   const location = useLocation()
 
   useEffect(() => {
-    console.log(location)
   }, [location])
 
   const handleLogout = () => {

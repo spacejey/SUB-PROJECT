@@ -15,7 +15,6 @@ export const getPayload = () => {
 // ! Check the validity of the token
 export const isAuthenticated = () => {
   const payload = getPayload()
-  console.log('payload=>', payload)
   if (!payload) return false
   const currentTime = Date.now() / 1000
   return currentTime < payload.exp

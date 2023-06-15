@@ -14,7 +14,7 @@ const MyCalendar = () => {
   const navigate = useNavigate()
   const [user, setUser] = useState()
   const [events, setEvents] = useState([])
-  const [selectedEvent, setSelectedEvent] = useState(null)
+  const [clickEvent, setClickEvent] = useState(null)
   const [error, setError] = useState()
 
   // ! On Mount
@@ -23,9 +23,9 @@ const MyCalendar = () => {
 
     const getUser = async () => {
       try {
-        const { data } = await axios.get('/api/users')
+        const { data } = await axios.get('/api/users/')
         setUser(data)
-        console.log('user data=>', data)
+        console.log('user EVENT data=>', data[0].bought[0].date)
       } catch (err) {
         console.log(err)
         setError(err.message)
@@ -36,11 +36,11 @@ const MyCalendar = () => {
 
 
   const handleEventClick = (event) => {
-    setSelectedEvent(event)
+    setClickEvent(event)
   }
 
   const handleCloseModal = () => {
-    setSelectedEvent(null)
+    setClickEvent(null)
   }
 
   return (
@@ -58,7 +58,7 @@ const MyCalendar = () => {
         })}
         onSelectEvent={handleEventClick}
       />
-      <Modal show={selectedEvent !== null} onHide={handleCloseModal}>
+      <Modal show={clickEvent !== null} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title></Modal.Title>
         </Modal.Header>
