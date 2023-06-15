@@ -1,42 +1,39 @@
+import axios from 'axios'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 
+import { isAuthenticated } from '../../helpers/auth'
+
 const localizer = momentLocalizer(moment)
 
 const MyCalendar = () => {
+  const navigate = useNavigate()
+  const [user, setUser] = useState()
   const [events, setEvents] = useState([])
   const [selectedEvent, setSelectedEvent] = useState(null)
+  const [error, setError] = useState()
 
-  // Bring User
-  const fetchUserData = () => {
-    // Bring LoggedIn User
-
-    // Dummy Data
-    const userData = [
-      {
-        id: 1,
-        title: 'Liked Event',
-        start: moment().subtract(1, 'days').toDate(),
-        end: moment().subtract(1, 'days').add(2, 'hours').toDate(),
-        color: 'green',
-      },
-      {
-        id: 2,
-        title: 'Bought Event',
-        start: moment().add(1, 'days').toDate(),
-        end: moment().add(1, 'days').add(3, 'hours').toDate(),
-        color: 'red',
-      }
-    ]
-    setEvents(userData)
-  }
-
+  // ! On Mount
   useEffect(() => {
-    fetchUserData()
+    !isAuthenticated() && navigate('/')
+
+    const getUser = async () => {
+      try {
+        const { data } = await axios.get('/api/users')
+        setUser(data)
+        console.log('user data=>', data)
+      } catch (err) {
+        console.log(err)
+        setError(err.message)
+      }
+    }
+    getUser()
   }, [])
+
 
   const handleEventClick = (event) => {
     setSelectedEvent(event)
