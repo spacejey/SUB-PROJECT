@@ -27,6 +27,7 @@ const Events = () => {
   useEffect(() => {
     const getData = async () => {
       try {
+
         const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&apikey=${process.env.REACT_APP_API_KEY}`)
         console.log('data =>', data)
         setEvents(data._embedded.events)
@@ -55,12 +56,15 @@ const Events = () => {
   }
 
   const handleSelect = async (value, geohash) => {
-    console.log(value, geohash)
-    const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&locale=*&city=${value}`)
-    const { response } = await axios.get(`https://app.ticketmaster.com/discovery/v2/venues?apikey=${process.env.REACT_APP_API_KEY}&locale=*&geoPoint=gcpgz4e`)
-    setEvents(data._embedded.events)
-    console.log(response)
-    setVenues()
+    try {
+      const dataEntry  = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&locale=*&city=${value}`)
+      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/venues?apikey=${process.env.REACT_APP_API_KEY}&locale=*&geoPoint=${geohash}`)
+      setEvents(dataEntry.data._embedded.events)
+      setVenues(data._embedded.venues)
+      console.log(data._embedded.venues)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
 
@@ -127,6 +131,9 @@ const Events = () => {
             {/* Venue */}
             <label> Venue </label>
             <select value={formFields.venue} name='venue'>
+              { venues.map( (venue,i) => 
+                <option key={i}> {venue.name} </option>
+              )}
             </select>
           </Col>
         </Row>
