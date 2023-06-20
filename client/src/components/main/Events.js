@@ -1,6 +1,9 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
+// Date Package
+import DatePicker from 'react-datepicker'
+
 // Form Imports
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
@@ -11,14 +14,15 @@ const Events = () => {
 
   // Form 
   const [formFields, setFormFields] = useState({
-    artist: '',
-    venue: '',
+    artist: '' ,
+    venue: '' ,
     date: '',
     genre: '',
     city: '',
   })
   const [formError, setFormError] = useState('')
-  const [venues, setVenues] = useState([])
+
+  const [startDate, setStartDate] = useState(new Date())
 
   // Pagination
   const [totalPages, setTotalPages] = useState([])
@@ -26,6 +30,7 @@ const Events = () => {
 
   useEffect(() => {
     const getData = async () => {
+
       try {
         const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&apikey=${process.env.REACT_APP_API_KEY}`)
         setEvents(data._embedded.events)
@@ -45,7 +50,22 @@ const Events = () => {
 
 
   const handleSubmit = async (e) => {
-    console.log('eeee')
+    e.preventDefault()
+    if (!formFields.venue === '' ) {
+      formFields.venue.replace('%20', ' ')
+      console.log(formFields.venue)
+    } 
+    if (!formFields.artist === '') {
+      formFields.artist.replace('%20', ' ')
+      console.log(formFields.artist)
+    } 
+    console.log(formFields)
+    try {
+      const { data } = await axios.get( `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&keyword=${formFields.artist}%20${formFields.venue}`)
+      console.log(data)
+    } catch (error){
+      console.log(error)
+    }
   }
 
   const handleChange = (e) => {
@@ -61,7 +81,12 @@ const Events = () => {
       console.log(error)
     }
   }
+  console.log(formFields)
 
+  const handleDate = (date) => {
+    setFormFields({ ...formFields , date: date })
+    setStartDate(date)
+  }
 
   // Pagination Executions 
 
@@ -122,10 +147,11 @@ const Events = () => {
             <input onChange={(e) => handleChange(e)} name='artist' value={formFields.artist} />
             {/* Date */}
             <label> Date </label>
-            <input value={formFields.date} name='date' />
+            <DatePicker selected={startDate} onChange={(date) => handleDate(date)} />
             {/* Venue */}
             <label> Venue </label>
             <input onChange={(e) => handleChange(e)} name='venue' value={formFields.venue} />
+            <button> submit </button>
           </Col>
         </Row>
       </Container>
