@@ -29,7 +29,6 @@ const Events = () => {
       try {
 
         const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&apikey=${process.env.REACT_APP_API_KEY}`)
-        console.log('data =>', data)
         setEvents(data._embedded.events)
         if (data.page.totalPages < 49) {
           setTotalPages(data.page.totalPages)
