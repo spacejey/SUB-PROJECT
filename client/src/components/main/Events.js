@@ -27,7 +27,6 @@ const Events = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-
         const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&apikey=${process.env.REACT_APP_API_KEY}`)
         setEvents(data._embedded.events)
         if (data.page.totalPages < 49) {
@@ -56,11 +55,8 @@ const Events = () => {
 
   const handleSelect = async (value, geohash) => {
     try {
-      const dataEntry  = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&locale=*&city=${value}`)
-      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/venues?apikey=${process.env.REACT_APP_API_KEY}&locale=*&geoPoint=${geohash}`)
-      setEvents(dataEntry.data._embedded.events)
-      setVenues(data._embedded.venues)
-      console.log(data._embedded.venues)
+      const data = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&locale=*&city=${value}`)
+      setEvents(data._embedded.events)
     } catch (error) {
       console.log(error)
     }
@@ -104,18 +100,18 @@ const Events = () => {
             {/* Location */}
             <label> City </label>
             <select onChange={(e) => handleSelect(e.target.value , e.target.options[e.target.selectedIndex].dataset.geohash)} >
-              <option data-geohash="gcn7w3e">Belfast</option>
-              <option data-geohash="gcpgz4e">Bristol</option>
-              <option data-geohash="gcpv4bh">Brighton</option>
-              <option data-geohash="gcprgcj">Cardiff</option>
-              <option data-geohash="gcvxj9k">Edinburgh</option>
-              <option data-geohash="gcvxtv7">Glasgow</option>
-              <option data-geohash="gcw6nbu">Leeds</option>
-              <option data-geohash="gcw5ekp">Liverpool</option>
-              <option data-geohash="gcpuvpk">London</option>
-              <option data-geohash="gcw0whf">Manchester</option>
-              <option data-geohash="gcw41y7">Newcastle</option>
-              <option data-geohash="gcpxf08">Oxford</option>
+              <option >Belfast</option>
+              <option >Bristol</option>
+              <option >Brighton</option>
+              <option >Cardiff</option>
+              <option >Edinburgh</option>
+              <option >Glasgow</option>
+              <option >Leeds</option>
+              <option >Liverpool</option>
+              <option >London</option>
+              <option >Manchester</option>
+              <option >Newcastle</option>
+              <option >Oxford</option>
             </select>
             {/* Genre */}
             <label> Genre </label>
@@ -129,11 +125,7 @@ const Events = () => {
             <input value={formFields.date} name='date' />
             {/* Venue */}
             <label> Venue </label>
-            <select value={formFields.venue} name='venue'>
-              { venues.map( (venue,i) => 
-                <option key={i}> {venue.name} </option>
-              )}
-            </select>
+            <input onChange={(e) => handleChange(e)} name='venue' value={formFields.venue} />
           </Col>
         </Row>
       </Container>
