@@ -58,7 +58,6 @@ const Events = () => {
     const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/venues?apikey=${process.env.REACT_APP_API_KEY}&locale=*&countryCode=${value}`)
     const { response } = await axios.get(`https://app.ticketmaster.com/discovery/v2/venues?apikey=${process.env.REACT_APP_API_KEY}&locale=*&geoPoint=gcpgz4e`)
     setEvents(data._embedded.events)
-    console.log('formFields.venue=>!!!!', data)
     console.log(response)
     setVenues()
   }
