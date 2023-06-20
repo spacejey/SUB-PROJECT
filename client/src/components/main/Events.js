@@ -28,7 +28,6 @@ const Events = () => {
     const getData = async () => {
       try {
         const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&apikey=${process.env.REACT_APP_API_KEY}`)
-        console.log('data =>', data)
         setEvents(data._embedded.events)
         if (data.page.totalPages < 49) {
           setTotalPages(data.page.totalPages)
@@ -56,9 +55,10 @@ const Events = () => {
 
   const handleSelect = async (value, geohash) => {
     console.log(value, geohash)
-    const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&locale=*&city=${value}`)
+    const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/venues?apikey=${process.env.REACT_APP_API_KEY}&locale=*&countryCode=${value}`)
     const { response } = await axios.get(`https://app.ticketmaster.com/discovery/v2/venues?apikey=${process.env.REACT_APP_API_KEY}&locale=*&geoPoint=gcpgz4e`)
     setEvents(data._embedded.events)
+    console.log('formFields.venue=>!!!!', data)
     console.log(response)
     setVenues()
   }
