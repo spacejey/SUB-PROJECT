@@ -61,7 +61,7 @@ const Events = () => {
     } 
     console.log(formFields)
     try {
-      const { data } = await axios.get( `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&keyword=${formFields.artist}%20${formFields.venue}`)
+      const { data } = await axios.get( `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&keyword=${formFields.artist}%20${formFields.venue}&city=${formFields.city}&startDateTime=2023-06-21T15:31:00Z`)
       console.log(data)
     } catch (error){
       console.log(error)
@@ -76,7 +76,8 @@ const Events = () => {
   const handleSelect = async (value, geohash) => {
     try {
       const data = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&locale=*&city=${value}`)
-      setEvents(data._embedded.events)
+      setEvents(data.data._embedded.events)
+      setFormFields({ ...formFields , city: value })
     } catch (error) {
       console.log(error)
     }
