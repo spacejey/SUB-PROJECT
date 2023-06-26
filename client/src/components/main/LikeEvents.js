@@ -35,8 +35,8 @@ const Likevents = ({ id }) => {
 
   return (
     <>
-      <button onClick={() => handleLike(event.id)}>Like Event</button>
-      <button onClick={() => handleBuy(event.id)}>Buy Event</button>
+      <button onClick={() => handleLike(id)}>Like Event</button>
+      <button onClick={() => handleBuy(id)}>Buy Event</button>
     </>
 
   ) 
