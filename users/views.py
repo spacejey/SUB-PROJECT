@@ -96,3 +96,14 @@ class UserSingleView(APIView):
         serialized_liked_event.save()
         return Response(serialized_user.data)
     
+    @exceptions
+    def post(self, request, pk):
+        user = User.objects.get(pk=pk)
+        event_id = request.data.get('eventId')
+        if event_id:
+            user.bought.add(event_id)
+            user.save()
+            serialized_user = PopulatedUserSerializer(user)
+            return Response(serialized_user.data)
+        else:
+            return Response({'error': 'Event ID not provided.'}, status=status.HTTP_400_BAD_REQUEST)
