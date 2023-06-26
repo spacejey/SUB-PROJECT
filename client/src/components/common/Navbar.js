@@ -9,6 +9,7 @@ import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import Offcanvas from 'react-bootstrap/Offcanvas'
 
+
 // Custom Components
 import Error from '../common/Error'
 import { removeToken, isAuthenticated } from '../../helpers/auth'
@@ -19,9 +20,14 @@ const NavBar = () => {
   useEffect(() => {
   }, [location])
 
+
   const handleLogout = () => {
     removeToken()
   }
+
+  useEffect(() =>{
+    console.log(location)
+  }, [location])
 
 
   return (

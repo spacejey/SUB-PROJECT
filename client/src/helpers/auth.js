@@ -17,6 +17,7 @@ export const isAuthenticated = () => {
   const payload = getPayload()
   if (!payload) return false
   const currentTime = Date.now() / 1000
+  console.log('authenticated =>', currentTime < payload.exp)
   return currentTime < payload.exp
 }
 
