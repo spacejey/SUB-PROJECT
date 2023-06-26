@@ -82,7 +82,7 @@ const Events = () => {
       console.log(error)
     }
   }
-  console.log(formFields)
+  console.log(formFields.date)
 
   const handleDate = (date) => {
     setFormFields({ ...formFields , date: date })
@@ -120,6 +120,7 @@ const Events = () => {
   return (
     <>
       <h1>Events</h1>
+
       <Container >
         <Row>
           <Col as='form' xs='10' md='6' lg='4' onSubmit={(e) => handleSubmit(e)}>
@@ -148,7 +149,11 @@ const Events = () => {
             <input onChange={(e) => handleChange(e)} name='artist' value={formFields.artist} />
             {/* Date */}
             <label> Date </label>
-            <DatePicker selected={startDate} onChange={(date) => handleDate(date)} />
+            <DatePicker 
+              selected={startDate} 
+              onChange={(date) => handleDate(date)} 
+              showTimeInput={true}
+            />
             {/* Venue */}
             <label> Venue </label>
             <input onChange={(e) => handleChange(e)} name='venue' value={formFields.venue} />
