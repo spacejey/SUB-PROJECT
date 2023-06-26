@@ -1,6 +1,9 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
+// Date Package
+import DatePicker from 'react-datepicker'
+
 // Form Imports
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
@@ -16,14 +19,15 @@ const Events = ({ id }) => {
 
   // Form 
   const [formFields, setFormFields] = useState({
-    artist: '',
-    venue: '',
+    artist: '' ,
+    venue: '' ,
     date: '',
     genre: '',
     city: '',
   })
   const [formError, setFormError] = useState('')
-  const [venues, setVenues] = useState([])
+
+  const [startDate, setStartDate] = useState(new Date())
 
   // Pagination
   const [totalPages, setTotalPages] = useState([])
@@ -31,6 +35,7 @@ const Events = ({ id }) => {
 
   useEffect(() => {
     const getData = async () => {
+
       try {
         const { data } = await axios.get(
           `https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&segmentId=KZFzniwnSyZfZ7v7nJ&page=1&apikey=${process.env.REACT_APP_API_KEY}`
@@ -54,7 +59,22 @@ const Events = ({ id }) => {
 
 
   const handleSubmit = async (e) => {
-    console.log('eeee')
+    e.preventDefault()
+    if (!formFields.venue === '' ) {
+      formFields.venue.replace('%20', ' ')
+      console.log(formFields.venue)
+    } 
+    if (!formFields.artist === '') {
+      formFields.artist.replace('%20', ' ')
+      console.log(formFields.artist)
+    } 
+    console.log(formFields)
+    try {
+      const { data } = await axios.get( `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&keyword=${formFields.artist}%20${formFields.venue}&city=${formFields.city}&startDateTime=2023-06-21T15:31:00Z`)
+      console.log(data)
+    } catch (error){
+      console.log(error)
+    }
   }
 
   const handleChange = (e) => {
@@ -65,12 +85,18 @@ const Events = ({ id }) => {
   const handleSelect = async (value, geohash) => {
     try {
       const data = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&locale=*&city=${value}`)
-      setEvents(data._embedded.events)
+      setEvents(data.data._embedded.events)
+      setFormFields({ ...formFields , city: value })
     } catch (error) {
       console.log(error)
     }
   }
+  console.log(formFields.date)
 
+  const handleDate = (date) => {
+    setFormFields({ ...formFields , date: date })
+    setStartDate(date)
+  }
 
   // Pagination Executions 
 
@@ -103,6 +129,7 @@ const Events = ({ id }) => {
   return (
     <>
       <h1>Events</h1>
+
       <Container >
         <Row>
           <Col as='form' xs='10' md='6' lg='4' onSubmit={(e) => handleSubmit(e)}>
@@ -131,10 +158,15 @@ const Events = ({ id }) => {
             <input onChange={(e) => handleChange(e)} name='artist' value={formFields.artist} />
             {/* Date */}
             <label> Date </label>
-            <input value={formFields.date} name='date' />
+            <DatePicker 
+              selected={startDate} 
+              onChange={(date) => handleDate(date)} 
+              showTimeInput={true}
+            />
             {/* Venue */}
             <label> Venue </label>
             <input onChange={(e) => handleChange(e)} name='venue' value={formFields.venue} />
+            <button> submit </button>
           </Col>
         </Row>
       </Container>
