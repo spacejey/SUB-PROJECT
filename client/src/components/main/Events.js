@@ -10,9 +10,9 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 // Components
-import Likevents from './LikeEvents'
+import LikeEvents from './LikeEvents'
 
-const Events = ({ id }) => {
+const Events = () => {
   const [events, setEvents] = useState([])
   const [user, setUser] = useState([])
   const [userError, setUserError] = useState('')
@@ -175,8 +175,11 @@ const Events = ({ id }) => {
           <h2>{event.name}</h2>
           <p>Date: {event.dates.start.localDate}</p>
           <p>Venue: {event._embedded.venues[0].name}</p>
-          <Likevents
-            eventId={id}/>
+          <LikeEvents
+            eventId={ event.id }
+            name={ event.name }
+            date={ event.dates.start.localDate }
+          />
         </div>
       ))}
       <div id='page-numbers'>
