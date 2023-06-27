@@ -10,7 +10,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 // Components
-import LikeEvents from './LikeEvents'
+import LikeEvents from './LikeAndBuyEvents'
 
 const Events = () => {
   const [events, setEvents] = useState([])

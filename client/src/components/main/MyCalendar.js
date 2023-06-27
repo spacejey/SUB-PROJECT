@@ -8,9 +8,12 @@ import Button from 'react-bootstrap/Button'
 
 import { isAuthenticated } from '../../helpers/auth'
 
+//Components
+import LikeAndBuy from './LikeAndBuyEvents'
+
 const localizer = momentLocalizer(moment)
 
-const MyCalendar = () => {
+const MyCalendar = ({ eventId, name, date }) => {
   const navigate = useNavigate()
   const [user, setUser] = useState()
   const [events, setEvents] = useState([])
@@ -34,6 +37,9 @@ const MyCalendar = () => {
     getUser()
   }, [])
 
+  const handleEventLike = (eventData) => {
+    setEvents((prevEvents) => [...prevEvents, eventData])
+  }
 
   const handleEventClick = (event) => {
     setClickEvent(event)
