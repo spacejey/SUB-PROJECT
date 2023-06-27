@@ -12,7 +12,7 @@ import Col from 'react-bootstrap/Col'
 const Events = () => {
   const [events, setEvents] = useState([])
   const [venues, setVenues] = useState([])
-  const [apicall, setApiCall] = useState('')
+  const [venueInput, setVenueInput] = useState('')
 
   // Form State
   const [formFields, setFormFields] = useState({
@@ -28,22 +28,22 @@ const Events = () => {
 
   // Pagination State
   const [totalPages, setTotalPages] = useState([])
-  const [pages, setPages] = useState([1, 2, 3])
+  const [pages, setPages] = useState([])
 
   // Search Form Executions
 
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
     // format keyword search correctly
     if (!formFields.artist === '') {
       formFields.artist.replace('%20', ' ')
       console.log(formFields.artist)
     }
     try {
-      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&keyword=${formFields.artist}&${formFields.venue}&locale=*${formFields.date}${formFields.city}`)
+      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&keyword=${formFields.artist}&venueId=${formFields.venue}&locale=*${formFields.date}${formFields.city}&genreId=${formFields.genre}`)
       setEvents(data._embedded.events)
-      console.log(data)
       if (data.page.totalPages < 49) {
         setTotalPages(data.page.totalPages)
       } else {
@@ -52,20 +52,32 @@ const Events = () => {
     } catch (error) {
       console.log(error)
     }
+    setVenueInput('')
+    setFormFields( { ...formFields , artist: '' })
   }
 
+  // Handle Artist Text
   const handleChange = (e) => {
     setFormFields({ ...formFields, [e.target.name]: e.target.value })
     setFormError('')
   }
+
+  // Handle Inputting Venue Text - seperate to handingling artist text because of the initial venue search
+
+  const handleVenueChange = (e) => {
+    setVenueInput( e.target.value)
+  }
+
   // City Dropdown
 
   const handleCity = async (value) => {
-    try {
+
+    if (value !== 'Which City!') {
       setFormFields({ ...formFields, city: `&city=${value}` })
-    } catch (error) {
-      console.log(error)
+    } else {
+      setFormFields({ ...formFields, city: '' })
     }
+
   }
 
   // Date Handling
@@ -74,7 +86,6 @@ const Events = () => {
     const messyDate = date.toLocaleString().replace(/\//g, '-').replace(', ', 'T') + 'Z'
     const splitDate = messyDate.split('T')
     const formattedDate = splitDate[0].split('-').reverse().join('-') + 'T' + splitDate[1]
-    console.log(formattedDate)
     setFormFields({ ...formFields, date: `&startDateTime=${formattedDate}` })
     setStartDate(date)
   }
@@ -110,21 +121,25 @@ const Events = () => {
     }
   }
 
+  // Searching for venue
+
   const venueSearch = async (e) => {
     e.preventDefault()
     try {
-      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/venues?apikey=YIMnAEmaoN4xXMxXxJMCrMoWyDmBrayN&keyword=${formFields.venue}&locale=*`)
+      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/venues?apikey=YIMnAEmaoN4xXMxXxJMCrMoWyDmBrayN&keyword=${venueInput}&locale=*`)
       setVenues(data._embedded.venues)
     } catch (error) {
       console.log(error)
     }
   }
 
+  // Setting found venue to formFields
+
   const handleSelectVenue = (e) => {
-    setFormFields({ ... formFields , venue: e.target.options[e.target.selectedIndex].getAttribute('data-name') })
+    setFormFields({ ...formFields, venue: e.target.options[e.target.selectedIndex].getAttribute('data-name') })
   }
 
-  console.log(formFields)
+
   // Pagination Executions 
 
   const pageNumbers = (total, current) => {
@@ -148,7 +163,7 @@ const Events = () => {
   const sendToFirstPage = async () => {
     const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&keyword=${formFields.artist}&${formFields.venue}&locale=*${formFields.date}${formFields.city}`)
     setEvents(data._embedded.events)
-    setPages([1, 2, 3])
+    setPages(pageNumbers( totalPages , 1))
   }
 
   return (
@@ -161,7 +176,7 @@ const Events = () => {
             {/* Location */}
             <label> City </label>
             <select onChange={(e) => handleCity(e.target.value)} >
-              <option> Which city!</option>
+              <option>Which City!</option>
               <option >Belfast</option>
               <option >Bristol</option>
               <option >Brighton</option>
@@ -199,7 +214,7 @@ const Events = () => {
             />
             {/* Venue */}
             <label> Venue </label>
-            <input onChange={(e) => handleChange(e)} name='venue' value={formFields.venue} />
+            <input onChange={(e) => handleVenueChange(e)} name='venue' value={venueInput} />
             <button onClick={(e) => venueSearch(e)}> search for venue</button>
             <select onChange={(e) => handleSelectVenue(e)}>
               <option> --select venue--</option>
