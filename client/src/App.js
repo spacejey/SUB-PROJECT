@@ -5,7 +5,7 @@ import axios from 'axios'
 import Events from './components/main/Events'
 import Login from './components/auth/Login'
 import Register from './components/auth/Register'
-import Calendar from './components/main/Calendar'
+import Calendar from './components/main/MyCalendar'
 import NavBar from './components/common/Navbar'
 
 // Bootstrap

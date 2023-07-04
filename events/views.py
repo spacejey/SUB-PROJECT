@@ -5,11 +5,9 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from lib.exceptions import exceptions
-
 from .models import Event
 from .serializers.common import EventSerializer
 
-# Create your views here.
 
 class EventSingleView(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)

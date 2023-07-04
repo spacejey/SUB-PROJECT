@@ -8,7 +8,6 @@ from .serializers.common import UserSerializer, UserEventsSerializer
 from .serializers.populated import PopulatedUserSerializer
 from rest_framework.exceptions import PermissionDenied
 from lib.exceptions import exceptions
-
 from django.conf import settings
 
 # for token production
@@ -16,10 +15,10 @@ import jwt
 from datetime import datetime, timedelta
 User = get_user_model()
 
-# Create your views here.
 
 
-
+# LOGIN ROUTE
+# Endpoint: POST /api/auth/login/
 class LoginView(APIView):
 
     @exceptions
@@ -34,11 +33,12 @@ class LoginView(APIView):
         token = jwt.encode({ 'sub': user_to_login.id, 'exp': int(dt.strftime('%s')) }, settings.SECRET_KEY, algorithm='HS256')
         return Response({ 'message' : f'welcome back {user_to_login.username}', 'token': token })
 
+
+
+# REGISTER ROUTE
+# Endpoint: POST /api/auth/register/
 class RegisterView(APIView):
     
-    # REGISTER ROUTE
-    # Endpoint: POST /api/auth/register/
-
     @exceptions
     def post(self, request):
         user_to_add = UserSerializer(data=request.data)
@@ -46,20 +46,23 @@ class RegisterView(APIView):
         user_to_add.save()
         return Response(user_to_add.data, status.HTTP_201_CREATED)
     
-    # Get all Users
+
+
+# Get All Users
 class UsersListView(APIView):
         
     @exceptions
-
     def get(self,request):
         users = User.objects.all()
         serialized_users =  PopulatedUserSerializer(users, many=True)
         return Response(serialized_users.data)
     
+
+
+# Get Single Users
 class UserSingleView(APIView):
     
     @exceptions
-
     def get(self,request,pk):
         user = User.objects.get(pk=pk)
         serialized_user = PopulatedUserSerializer(user)
@@ -93,3 +96,14 @@ class UserSingleView(APIView):
         serialized_liked_event.save()
         return Response(serialized_user.data)
     
+    @exceptions
+    def post(self, request, pk):
+        user = User.objects.get(pk=pk)
+        event_id = request.data.get('eventId')
+        if event_id:
+            user.bought.add(event_id)
+            user.save()
+            serialized_user = PopulatedUserSerializer(user)
+            return Response(serialized_user.data)
+        else:
+            return Response({'error': 'Event ID not provided.'}, status=status.HTTP_400_BAD_REQUEST)
