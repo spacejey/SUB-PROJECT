@@ -9,7 +9,7 @@ const LikeEvents = ({ eventId, name, date, url, images }) => {
 
   // GET event
   const eventData = {
-    pk: eventId,
+    eventId: eventId,
     name: name,
     date: date,
     link: url,
