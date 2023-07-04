@@ -21,11 +21,11 @@ const Events = () => {
 
   // Form State
   const [formFields, setFormFields] = useState({
-    artist: '',
-    venue: '',
-    date: '',
-    genre: '',
-    city: '',
+    artist: false,
+    venue: false,
+    date: false,
+    genre: false,
+    city: false,
   })
   const [formError, setFormError] = useState('')
 
@@ -70,8 +70,9 @@ const Events = () => {
       console.log(formFields.artist)
     }
     try {
-      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&keyword=${formFields.artist}&venueId=${formFields.venue}&locale=*${formFields.date}${formFields.city}&genreId=${formFields.genre}`)
+      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}${formFields.artist ? formFields.artist : ''}${formFields.venue ? formFields.venue : '' }&locale=*${formFields.date ? formFields.date : ''}${formFields.city ? formFields.city : ''}${formFields.genre ? formFields.genre : '' }`)
       setEvents(data._embedded.events)
+      console.log(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}${formFields.artist ? formFields.artist : ''}${formFields.venue ? formFields.venue : '' }&locale=*${formFields.date ? formFields.date : ''}${formFields.city ? formFields.city : ''}${formFields.genre ? formFields.genre : '' }`)
       if (data.page.totalPages < 49) {
         setTotalPages(data.page.totalPages)
       } else {
@@ -86,7 +87,7 @@ const Events = () => {
 
   // Handle Artist Text
   const handleChange = (e) => {
-    setFormFields({ ...formFields, [e.target.name]: e.target.value })
+    setFormFields({ ...formFields, [e.target.name]: `&keyword= ${e.target.value}` })
     setFormError('')
   }
 
@@ -164,7 +165,7 @@ const Events = () => {
   // Setting found venue to formFields
 
   const handleSelectVenue = (e) => {
-    setFormFields({ ...formFields, venue: e.target.options[e.target.selectedIndex].getAttribute('data-name') })
+    setFormFields({ ...formFields, venue: `&venueId=${e.target.options[e.target.selectedIndex].getAttribute('data-name')}` })
   }
 
 
@@ -180,7 +181,7 @@ const Events = () => {
 
   const handlePage = async (e) => {
     try {
-      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&page=${e.target.value}&keyword=${formFields.artist}&${formFields.venue}&locale=*${formFields.date}${formFields.city}`)
+      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&page=${e.target.value}${formFields.artist ? formFields.artist : ''}${formFields.venue ? formFields.venue : '' }&locale=*${formFields.date ? formFields.date : ''}${formFields.city ? formFields.city : ''}${formFields.genre ? formFields.genre : '' }`)
       setEvents(data._embedded.events)
     } catch (error) {
       console.log(error)
@@ -189,7 +190,7 @@ const Events = () => {
   }
 
   const sendToFirstPage = async () => {
-    const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&keyword=${formFields.artist}&${formFields.venue}&locale=*${formFields.date}${formFields.city}`)
+    const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}${formFields.artist ? formFields.artist : ''}${formFields.venue ? formFields.venue : '' }&locale=*${formFields.date ? formFields.date : ''}${formFields.city ? formFields.city : ''}${formFields.genre ? formFields.genre : '' }`)
     setEvents(data._embedded.events)
     pageNumbers(totalPages, 2)
   }
@@ -232,7 +233,7 @@ const Events = () => {
             </select>
             {/* Artist */}
             <label> Artist </label>
-            <input onChange={(e) => handleChange(e)} name='artist' value={formFields.artist} />
+            <input onChange={(e) => handleChange(e)} name='artist' value={formFields.artist ? formFields.artist : '' } />
             {/* Date */}
             <label> Date </label>
             <DatePicker
