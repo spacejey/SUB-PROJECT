@@ -27,8 +27,12 @@ const Events = () => {
   const [startDate, setStartDate] = useState(null)
 
   // Pagination State
-  const [totalPages, setTotalPages] = useState([])
+  const [totalPages, setTotalPages] = useState(null)
   const [pages, setPages] = useState([])
+
+  // useEffect(() => {
+  //   pageNumbers( totalPages , 1)
+  // }, totalPages)
 
   // Search Form Executions
 
@@ -53,7 +57,7 @@ const Events = () => {
       console.log(error)
     }
     setVenueInput('')
-    setFormFields( { ...formFields , artist: '' })
+    setFormFields({ ...formFields, artist: '' })
   }
 
   // Handle Artist Text
@@ -62,10 +66,10 @@ const Events = () => {
     setFormError('')
   }
 
-  // Handle Inputting Venue Text - seperate to handingling artist text because of the initial venue search
+  // Handle Inputting Venue Text - seperate to handling artist text because of the initial venue search
 
   const handleVenueChange = (e) => {
-    setVenueInput( e.target.value)
+    setVenueInput(e.target.value)
   }
 
   // City Dropdown
@@ -163,7 +167,7 @@ const Events = () => {
   const sendToFirstPage = async () => {
     const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&keyword=${formFields.artist}&${formFields.venue}&locale=*${formFields.date}${formFields.city}`)
     setEvents(data._embedded.events)
-    setPages(pageNumbers( totalPages , 1))
+    pageNumbers(totalPages, 2)
   }
 
   return (
@@ -236,12 +240,16 @@ const Events = () => {
         </div>
       ))}
       <div id='page-numbers'>
-        {!pages.includes(1) && <button onClick={() => sendToFirstPage()}> First Page </button>}
-        {
-          pages.map((page, i) =>
-            <button key={i} onClick={(e) => handlePage(e)} value={page}> {page} </button>
-          )
-        }
+        {totalPages && (
+          <>
+            <button onClick={() => sendToFirstPage()}>First Page</button>
+            {pages.map((page, i) => (
+              <button key={i} onClick={(e) => handlePage(e)} value={page}>
+                {page}
+              </button>
+            ))}
+          </>
+        )}
       </div>
     </>
   )
