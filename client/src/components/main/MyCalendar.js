@@ -32,7 +32,8 @@ const MyCalendar = () => {
     }
     getUser()
   }, [])
-
+  
+  console.log(user)
   useEffect(() => {
     // Mark on Calendar
     const convertToCalendarEvent = (event, color) => {
@@ -97,6 +98,7 @@ const MyCalendar = () => {
           {/* <p> {clickEvent.images} </p> */}
           <p>Start: {clickEvent && moment(clickEvent.start).format('HH:mm a')} </p>
           <p>End: {clickEvent && moment(clickEvent.end).format('HH:mm a')} </p>
+          
           {/* <p>Ticket Link: {clickEvent.url}</p> */}
         </Modal.Body>
         <Modal.Footer>

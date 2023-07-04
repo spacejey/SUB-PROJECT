@@ -178,7 +178,7 @@ const Events = () => {
           <LikeEvents
             eventId={ event.id }
             name={ event.name }
-            date={ event.dates.start.localDate }
+            date= {`${event.dates.start.localDate }T${event.dates.start.localTime }Z`}
             url={ event.url }
             images={ event.images }
           />

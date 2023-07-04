@@ -15,6 +15,7 @@ const LikeEvents = ({ eventId, name, date, url, images }) => {
     link: url,
     image: images[0].url,
   }
+  console.log(eventData)
 
   const updateEventData = async (eventArrayId) => {
     const eventDetailsResponse = await authenticated.get(`/api/events/${eventArrayId}`)
