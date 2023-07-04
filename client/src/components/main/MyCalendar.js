@@ -10,7 +10,7 @@ import { isAuthenticated, loggedInUser, authenticated } from '../../helpers/auth
 
 const localizer = momentLocalizer(moment)
 
-const MyCalendar = ({ eventId, name, date }) => {
+const MyCalendar = () => {
   const navigate = useNavigate()
   const [user, setUser] = useState()
   const [events, setEvents] = useState([])
@@ -58,9 +58,11 @@ const MyCalendar = ({ eventId, name, date }) => {
     }
   }, [user])
 
-  const handleEventClick = (event) => {
-    setClickEvent(event)
-    console.log('이벤트 시작시간', event.start)
+  const handleEventClick = (e) => {
+    setClickEvent(e)
+    console.log('Clicked Event Data', e)
+    console.log('Start Time', e.start)
+    console.log('End Time', e.end)
   }
 
   const handleCloseModal = () => {
@@ -87,11 +89,11 @@ const MyCalendar = ({ eventId, name, date }) => {
       {/* Event Click Modal */}
       <Modal show={clickEvent !== null} onHide={handleCloseModal}>
         <Modal.Header closeButton>
-          <Modal.Title></Modal.Title>
+          <Modal.Title>{clickEvent && clickEvent.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Start:  </p>
-          <p>End: </p>
+          <p>Start: {clickEvent && moment(clickEvent.start).format('HH:mm a')} </p>
+          <p>End: {clickEvent && moment(clickEvent.end).format('HH:mm a')} </p>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={handleCloseModal}>Close</Button>
