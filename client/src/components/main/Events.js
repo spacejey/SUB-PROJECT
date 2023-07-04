@@ -34,27 +34,6 @@ const Events = () => {
   // Pagination State
   const [totalPages, setTotalPages] = useState(null)
   const [pages, setPages] = useState([])
-
-  // useEffect(() => {
-  //   const getData = async () => {
-
-  //     try {
-  //       const { data } = await axios.get(
-  //         `https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&segmentId=KZFzniwnSyZfZ7v7nJ&page=1&apikey=${process.env.REACT_APP_API_KEY}`
-  //       )
-  //       console.log('data =>', data)
-  //       setEvents(data._embedded.events)
-  //       if (data.page.totalPages < 49) {
-  //         setTotalPages(data.page.totalPages)
-  //       } else {
-  //         setTotalPages(49)
-  //       }
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   }
-  //   getData()
-  // }, [])
   
 
 
@@ -84,6 +63,10 @@ const Events = () => {
     setVenueInput('')
     setFormFields({ ...formFields, artist: '' })
   }
+  useEffect(() => {
+    pageNumbers( totalPages, 0)
+  }, [formFields])
+  
 
   // Handle Artist Text
   const handleChange = (e) => {
@@ -174,10 +157,18 @@ const Events = () => {
   const pageNumbers = (total, current) => {
     if (current === total) {
       setPages([current - 3, current - 2, current - 1, current])
+    } else if (current > total - 3){
+      setPages([total - 3, total - 2, total - 1 , total])
+    } else if ( current === 0 ){
+      setPages([current , current + 1 , current + 2 , '...', total])
     } else {
-      setPages([current - 1, current, current + 1, '...', total])
+      setPages([current - 1 , current , current + 1, '...', total])
     }
   }
+
+  useEffect(() => {
+
+  }, [])
 
   const handlePage = async (e) => {
     try {
@@ -192,7 +183,7 @@ const Events = () => {
   const sendToFirstPage = async () => {
     const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}${formFields.artist ? formFields.artist : ''}${formFields.venue ? formFields.venue : '' }&locale=*${formFields.date ? formFields.date : ''}${formFields.city ? formFields.city : ''}${formFields.genre ? formFields.genre : '' }`)
     setEvents(data._embedded.events)
-    pageNumbers(totalPages, 2)
+    pageNumbers(totalPages, 0)
   }
 
   return (
@@ -274,7 +265,7 @@ const Events = () => {
       <div id='page-numbers'>
         {totalPages && (
           <>
-            <button onClick={() => sendToFirstPage()}>First Page</button>
+            { !pages.includes(0) && <button onClick={() => sendToFirstPage()}>First Page</button> }
             {pages.map((page, i) => (
               <button key={i} onClick={(e) => handlePage(e)} value={page}>
                 {page}
