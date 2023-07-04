@@ -90,7 +90,7 @@ const MyCalendar = ({ eventId, name, date }) => {
           <Modal.Title></Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Start: </p>
+          <p>Start:  </p>
           <p>End: </p>
         </Modal.Body>
         <Modal.Footer>
