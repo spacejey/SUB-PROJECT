@@ -14,81 +14,66 @@ const LikeEvents = ({ eventId, name, date }) => {
     date: date,
   }
 
-  // Handle Like Button
-  const handleLike = async (e) => {
+  const updateEventData = async (eventArrayId) => {
+    const eventDetailsResponse = await authenticated.get(`/api/events/${eventArrayId}`)
+    const eventDetails = eventDetailsResponse.data
+    console.log('eventDetails', eventDetails)
 
+    const updatedEventData = {
+      pk: eventId,
+      name: eventDetails.name,
+      date: eventDetails.date,
+    }
+    console.log('updatedEventData', updatedEventData)
+  }
+
+  const handleEvent = useCallback(async (type) => {
     try {
       if (eventDataArray.includes(eventId)) {
-        console.log('Event ID already exist')
+        console.log('Event ID already exists')
         return
       }
-      // Do something with the event data
+
       const response = await authenticated.post('/api/events/', eventData)
       console.log('POSTED Event Data!!!!!!!!! =>', response)
-      setEventDataArray()
-      console.log('eventDataArray', eventDataArray)
+      setEventDataArray([])
 
-      // single event with just ID
       const eventArrayId = response.data.id
       console.log('Event ID =>', eventArrayId)
-      
-      // Put Liked data to User Data
-      const userResponse = await authenticated.put(`/api/users/${loggedInUser()}/`, {
-        liked: [eventArrayId],
-      })
-      console.log('USER LIKED UPDATED=>', userResponse)
 
-      // Fetch user event details using event ID
-      const eventDetailsResponse = await authenticated.get(`/api/events/${eventArrayId}`)
-      const eventDetails = eventDetailsResponse.data
-      console.log('eventDetails', eventDetails)
-
-      // Update eventData with event details
-      const updatedEventData = {
-        pk: eventId,
-        name: eventDetails.name,
-        date: eventDetails.date,
+      const updateLikedOrBoughtData = async (field) => {
+        const userResponse = await authenticated.put(`/api/users/${loggedInUser()}/`, {
+          [field]: [eventArrayId],
+        })
+        console.log(`USER ${field.toUpperCase()} UPDATED =>`, userResponse)
       }
-      console.log('updatedEventData', updatedEventData)
 
+      if (type === 'like') {
+        await updateLikedOrBoughtData('liked')
+      } else if (type === 'buy') {
+        await updateLikedOrBoughtData('bought')
+      }
+
+      await updateEventData(eventArrayId)
     } catch (err) {
       console.log(err)
     }
-  }
+  }, [eventData, eventDataArray, eventId])
 
-  const handleBuy = async (e) => {
-    try {
-      const response = await authenticated.post('/api/events/', eventData)
-      setEventDataArray()
-  
-      const eventArrayId = response.data.id
-  
-      const userResponse = await authenticated.put(`/api/users/${loggedInUser()}/`, {
-        bought: [eventArrayId],
-      })
-      console.log('USER BOUGHT UPDATED =>', userResponse)
-  
-      const eventDetailsResponse = await authenticated.get(`/api/events/${eventArrayId}`)
-      const eventDetails = eventDetailsResponse.data
-      console.log('eventDetails', eventDetails)
-  
-      const updatedEventData = {
-        pk: eventId,
-        name: eventDetails.name,
-        date: eventDetails.date,
-      }
-      console.log('updatedEventData', updatedEventData)
-  
-    } catch (err) {
-      console.log(err)
-    }
-  }
+  const handleLike = useCallback(() => {
+    handleEvent('like')
+  }, [handleEvent])
+
+  const handleBuy = useCallback(() => {
+    handleEvent('buy')
+  }, [handleEvent])
 
   return (
     <>
       <button onClick={handleLike}>Like Event</button>
       <button onClick={handleBuy}>Buy Event</button>
     </>
-  ) 
+  )
 }
+
 export default LikeEvents
