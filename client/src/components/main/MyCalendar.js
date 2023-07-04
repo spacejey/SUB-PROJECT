@@ -6,10 +6,8 @@ import moment from 'moment'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 
-import { isAuthenticated } from '../../helpers/auth'
+import { isAuthenticated, loggedInUser, authenticated } from '../../helpers/auth'
 
-//Components
-import LikeAndBuy from './LikeAndBuyEvents'
 
 const localizer = momentLocalizer(moment)
 
@@ -20,15 +18,15 @@ const MyCalendar = ({ eventId, name, date }) => {
   const [clickEvent, setClickEvent] = useState(null)
   const [error, setError] = useState()
 
-  // ! On Mount
+
+  // ! User data On Mount
   useEffect(() => {
     !isAuthenticated() && navigate('/')
 
     const getUser = async () => {
       try {
-        const { data } = await axios.get('/api/users/')
+        const { data } = await authenticated.get(`/api/users/${loggedInUser()}/`)
         setUser(data)
-        console.log('user EVENT data=>', data[0].bought[0].date)
       } catch (err) {
         console.log(err)
         setError(err.message)
@@ -37,12 +35,34 @@ const MyCalendar = ({ eventId, name, date }) => {
     getUser()
   }, [])
 
-  const handleEventLike = (eventData) => {
-    setEvents((prevEvents) => [...prevEvents, eventData])
-  }
+  
+  // User Liked Events
+  useEffect(() => {
+  
+    // Mark on Calendar
+    const convertToCalendarEvent = (userLikedEvents) => {
+      const { date, name } = userLikedEvents
+      return {
+        start: new Date(date),
+        end: new Date(date),
+        title: name,
+        color: 'pink',
+      }
+    }
+
+    // Get all the Liked Events
+    if (user) {
+      const likedEvents = user.liked.map((likedItem) =>
+        convertToCalendarEvent(likedItem)
+      )
+      setEvents(likedEvents)
+    }
+  }, [user])
+
 
   const handleEventClick = (event) => {
     setClickEvent(event)
+    console.log('이벤트 시작시간', event.start)
   }
 
   const handleCloseModal = () => {
@@ -53,8 +73,8 @@ const MyCalendar = ({ eventId, name, date }) => {
     <div>
       <Calendar
         localizer={localizer}
-        startAccessor="start"
-        endAccessor="end"
+        startAccessor={(event) => event.start}
+        endAccessor={(event) => event.end}
         style={{ height: 500 }}
         events={events}
         eventPropGetter={(event) => ({

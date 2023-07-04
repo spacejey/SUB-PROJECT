@@ -36,6 +36,7 @@ const LikeEvents = ({ eventId, name, date }) => {
       const userResponse = await authenticated.put(`/api/users/${loggedInUser()}/`, {
         liked: [eventArrayId],
       })
+      console.log('USER LIKED UPDATED=>', userResponse)
 
       // Fetch user event details using event ID
       const eventDetailsResponse = await authenticated.get(`/api/events/${eventArrayId}`)
@@ -55,14 +56,29 @@ const LikeEvents = ({ eventId, name, date }) => {
     }
   }
 
-  // Handle Buy Button
-  const handleBuy = async (e, id) => {
+  const handleBuy = async (e) => {
     try {
-      const response = await axios.put(`/api/users/${loggedInUser()}/`, {
-        bought: [...user.bought, e.target.value],
+      const response = await authenticated.post('/api/events/', eventData)
+      setEventDataArray()
+  
+      const eventArrayId = response.data.id
+  
+      const userResponse = await authenticated.put(`/api/users/${loggedInUser()}/`, {
+        bought: [eventArrayId],
       })
-      setUser(response.data)
-      console.log('Event bought! =>', response.data)
+      console.log('USER BOUGHT UPDATED =>', userResponse)
+  
+      const eventDetailsResponse = await authenticated.get(`/api/events/${eventArrayId}`)
+      const eventDetails = eventDetailsResponse.data
+      console.log('eventDetails', eventDetails)
+  
+      const updatedEventData = {
+        pk: eventId,
+        name: eventDetails.name,
+        date: eventDetails.date,
+      }
+      console.log('updatedEventData', updatedEventData)
+  
     } catch (err) {
       console.log(err)
     }
