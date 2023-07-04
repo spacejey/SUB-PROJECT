@@ -32,7 +32,7 @@ const LikeEvents = ({ eventId, name, date, url, images }) => {
 
       const response = await authenticated.post('/api/events/', eventData)
       console.log('POSTED Event Data!!!!!!!!! =>', response)
-      setEventDataArray([])
+      setEventDataArray([...eventDataArray, eventId])
 
       const eventArrayId = response.data.id
       console.log('Event ID =>', eventArrayId)
