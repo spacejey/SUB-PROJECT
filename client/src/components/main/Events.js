@@ -35,30 +35,27 @@ const Events = () => {
   const [totalPages, setTotalPages] = useState(null)
   const [pages, setPages] = useState([])
 
-  useEffect(() => {
-    const getData = async () => {
-
-      try {
-        const { data } = await axios.get(
-          `https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&segmentId=KZFzniwnSyZfZ7v7nJ&page=1&apikey=${process.env.REACT_APP_API_KEY}`
-        )
-        console.log('data =>', data)
-        setEvents(data._embedded.events)
-        if (data.page.totalPages < 49) {
-          setTotalPages(data.page.totalPages)
-        } else {
-          setTotalPages(49)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    getData()
-  }, [])
-  
   // useEffect(() => {
-  //   pageNumbers( totalPages , 1)
-  // }, totalPages)
+  //   const getData = async () => {
+
+  //     try {
+  //       const { data } = await axios.get(
+  //         `https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&segmentId=KZFzniwnSyZfZ7v7nJ&page=1&apikey=${process.env.REACT_APP_API_KEY}`
+  //       )
+  //       console.log('data =>', data)
+  //       setEvents(data._embedded.events)
+  //       if (data.page.totalPages < 49) {
+  //         setTotalPages(data.page.totalPages)
+  //       } else {
+  //         setTotalPages(49)
+  //       }
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
+  //   getData()
+  // }, [])
+  
 
 
   // Search Form Executions
