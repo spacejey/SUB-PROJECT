@@ -8,7 +8,6 @@ import Button from 'react-bootstrap/Button'
 
 import { isAuthenticated, loggedInUser, authenticated } from '../../helpers/auth'
 
-
 const localizer = momentLocalizer(moment)
 
 const MyCalendar = ({ eventId, name, date }) => {
@@ -18,8 +17,7 @@ const MyCalendar = ({ eventId, name, date }) => {
   const [clickEvent, setClickEvent] = useState(null)
   const [error, setError] = useState()
 
-
-  // ! User data On Mount
+  // User data On Mount
   useEffect(() => {
     !isAuthenticated() && navigate('/')
 
@@ -35,30 +33,30 @@ const MyCalendar = ({ eventId, name, date }) => {
     getUser()
   }, [])
 
-  
-  // User Liked Events
   useEffect(() => {
-  
     // Mark on Calendar
-    const convertToCalendarEvent = (userLikedEvents) => {
-      const { date, name } = userLikedEvents
+    const convertToCalendarEvent = (event, color) => {
+      const { date, name } = event
       return {
         start: new Date(date),
         end: new Date(date),
         title: name,
-        color: 'pink',
+        color: color,
       }
     }
 
-    // Get all the Liked Events
+    // Get all the Liked and Bought Events
     if (user) {
       const likedEvents = user.liked.map((likedItem) =>
-        convertToCalendarEvent(likedItem)
+        convertToCalendarEvent(likedItem, 'pink')
       )
-      setEvents(likedEvents)
+      const boughtEvents = user.bought.map((boughtItem) =>
+        convertToCalendarEvent(boughtItem, 'blue')
+      )
+      const allEvents = [...likedEvents, ...boughtEvents]
+      setEvents(allEvents)
     }
   }, [user])
-
 
   const handleEventClick = (event) => {
     setClickEvent(event)
@@ -70,12 +68,13 @@ const MyCalendar = ({ eventId, name, date }) => {
   }
 
   return (
+    // Calendar 
     <div>
       <Calendar
         localizer={localizer}
         startAccessor={(event) => event.start}
         endAccessor={(event) => event.end}
-        style={{ height: 500 }}
+        style={{ height: '80vh' }}
         events={events}
         eventPropGetter={(event) => ({
           style: {
@@ -84,6 +83,8 @@ const MyCalendar = ({ eventId, name, date }) => {
         })}
         onSelectEvent={handleEventClick}
       />
+
+      {/* Event Click Modal */}
       <Modal show={clickEvent !== null} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title></Modal.Title>
@@ -93,9 +94,7 @@ const MyCalendar = ({ eventId, name, date }) => {
           <p>End: </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Close
-          </Button>
+          <Button onClick={handleCloseModal}>Close</Button>
         </Modal.Footer>
       </Modal>
     </div>
