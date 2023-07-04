@@ -179,6 +179,8 @@ const Events = () => {
             eventId={ event.id }
             name={ event.name }
             date={ event.dates.start.localDate }
+            url={ event.url }
+            images={ event.images }
           />
         </div>
       ))}

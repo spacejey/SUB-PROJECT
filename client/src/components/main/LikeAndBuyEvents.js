@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useCallback, useEffect, useState } from 'react'
 import { loggedInUser, authenticated } from '../../helpers/auth'
 
-const LikeEvents = ({ eventId, name, date }) => {
+const LikeEvents = ({ eventId, name, date, url, images }) => {
   const [user, setUser] = useState([])
   const [eventDataArray, setEventDataArray] = useState([])
   const [userError, setUserError] = useState('')
@@ -12,23 +12,19 @@ const LikeEvents = ({ eventId, name, date }) => {
     pk: eventId,
     name: name,
     date: date,
+    link: url,
+    image: images[0].url,
   }
 
   const updateEventData = async (eventArrayId) => {
     const eventDetailsResponse = await authenticated.get(`/api/events/${eventArrayId}`)
     const eventDetails = eventDetailsResponse.data
     console.log('eventDetails', eventDetails)
-
-    const updatedEventData = {
-      pk: eventId,
-      name: eventDetails.name,
-      date: eventDetails.date,
-    }
-    console.log('updatedEventData', updatedEventData)
   }
 
   const handleEvent = useCallback(async (type) => {
     try {
+
       if (eventDataArray.includes(eventId)) {
         console.log('Event ID already exists')
         return
