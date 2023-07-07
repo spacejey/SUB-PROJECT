@@ -1,10 +1,10 @@
 import axios from 'axios'
 import { useCallback, useEffect, useState } from 'react'
-import { loggedInUser, authenticated } from '../../helpers/auth'
 
-const LikeEvents = ({ eventId, name, date, url, images }) => {
+
+const LikeEvents = ({ loggedInUser, authenticated , liked, setLiked, bought , setBought, eventId, name, date, url, images }) => {
   const [user, setUser] = useState([])
-  const [eventDataArray, setEventDataArray] = useState([])
+
   const [userError, setUserError] = useState('')
 
   // GET event
@@ -17,23 +17,32 @@ const LikeEvents = ({ eventId, name, date, url, images }) => {
   }
 
 
+
   const updateEventData = async (eventArrayId) => {
     const eventDetailsResponse = await authenticated.get(`/api/events/${eventArrayId}`)
     const eventDetails = eventDetailsResponse.data
     console.log('eventDetails', eventDetails)
   }
 
+
+
   const handleEvent = useCallback(async (type) => {
     try {
 
-      if (eventDataArray.includes(eventId)) {
-        console.log('Event ID already exists')
-        return
+      if (type === 'like') { 
+        if (liked.include(eventId)) {
+          console.log('already liked')
+        } else {
+          // const response = await authenticated.post('/api/events/', eventData)
+          setLiked( [ ...liked, eventId])
+        }
+      } else if (type === 'buy') {
+        console.log('already bought')
+        setBought( [ ...liked, eventId])
       }
 
       const response = await authenticated.post('/api/events/', eventData)
       console.log('POSTED Event Data!!!!!!!!! =>', response)
-      setEventDataArray([...eventDataArray, eventId])
 
       const eventArrayId = response.data.id
       console.log('Event ID =>', eventArrayId)
@@ -52,10 +61,11 @@ const LikeEvents = ({ eventId, name, date, url, images }) => {
       }
 
       await updateEventData(eventArrayId)
+
     } catch (err) {
       console.log(err)
     }
-  }, [eventData, eventDataArray, eventId])
+  }, [eventData, eventId])
 
   const handleLike = useCallback(() => {
     handleEvent('like')

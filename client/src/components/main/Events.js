@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { loggedInUser, authenticated } from '../../helpers/auth'
 
 // Date Package
 import DatePicker from 'react-datepicker'
@@ -16,6 +17,8 @@ const Events = () => {
   const [events, setEvents] = useState([])
   const [user, setUser] = useState([])
   const [userError, setUserError] = useState('')
+  const [ liked, setLiked] = useState([])
+  const [ bought, setBought] = useState([])
 
   // Form 
   const [formFields, setFormFields] = useState({
@@ -51,6 +54,12 @@ const Events = () => {
         console.log(error)
       }
     }
+    const getUser = async() => {
+      const { data } = await authenticated.get(`/api/users/${loggedInUser()}/`)
+      setBought(data.bought.map( event => event.eventId))
+      setLiked(data.liked.map( event => event.eventId))
+    }
+    getUser()
     getData()
   }, [])
 
@@ -176,6 +185,12 @@ const Events = () => {
           <p>Date: {event.dates.start.localDate}</p>
           <p>Venue: {event._embedded.venues[0].name}</p>
           <LikeEvents
+            loggedInUser={loggedInUser}
+            authenticated={authenticated}
+            liked={liked}
+            setLiked={setLiked}
+            bought={bought} 
+            setBought={setBought}
             eventId={ event.id }
             name={ event.name }
             date= {`${event.dates.start.localDate }T${event.dates.start.localTime }Z`}
