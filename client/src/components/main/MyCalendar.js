@@ -44,7 +44,7 @@ const MyCalendar = () => {
         end: new Date(date),
         title: name,
         color: color,
-        image: image[0].url,
+        image: image,
       }
     }
     
@@ -64,11 +64,14 @@ const MyCalendar = () => {
 
   const handleEventClick = (e) => {
     setClickEvent(e)
+
   }
 
   const handleCloseModal = () => {
     setClickEvent(null)
   }
+
+  console.log(clickEvent)
 
   return (
     // Calendar 
@@ -93,7 +96,7 @@ const MyCalendar = () => {
           <Modal.Title>{clickEvent && clickEvent.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <img src={image} alt="" />
+          {clickEvent && <img src={clickEvent.image} alt="" /> }
           <p>Start: {clickEvent && moment(clickEvent.start).format('HH:mm a')} </p>
           <p>End: {clickEvent && moment(clickEvent.end).format('HH:mm a')} </p>
           
