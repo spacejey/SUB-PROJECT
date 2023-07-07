@@ -11,6 +11,7 @@ import { isAuthenticated, loggedInUser, authenticated } from '../../helpers/auth
 const localizer = momentLocalizer(moment)
 
 const MyCalendar = () => {
+
   const navigate = useNavigate()
   const [user, setUser] = useState()
   const [events, setEvents] = useState([])
@@ -33,21 +34,20 @@ const MyCalendar = () => {
     getUser()
   }, [])
   
-  console.log(user)
   useEffect(() => {
     // Mark on Calendar
     const convertToCalendarEvent = (event, color) => {
-      const { date, name, url, images } = event
+      const { date, name, image } = event
+      console.log('EVENT=>', event)
       return {
         start: new Date(date),
         end: new Date(date),
         title: name,
-        url: url,
-        images: images,
         color: color,
+        image: image[0].url,
       }
     }
-
+    
     // Get all the Liked and Bought Events
     if (user) {
       const likedEvents = user.liked.map((likedItem) =>
@@ -58,14 +58,12 @@ const MyCalendar = () => {
       )
       const allEvents = [...likedEvents, ...boughtEvents]
       setEvents(allEvents)
+      
     }
   }, [user])
 
   const handleEventClick = (e) => {
     setClickEvent(e)
-    console.log('Clicked Event Data', e)
-    console.log('Start Time', e.start)
-    console.log('End Time', e.end)
   }
 
   const handleCloseModal = () => {
@@ -95,7 +93,7 @@ const MyCalendar = () => {
           <Modal.Title>{clickEvent && clickEvent.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {/* <p> {clickEvent.images} </p> */}
+          <img src={image} alt="" />
           <p>Start: {clickEvent && moment(clickEvent.start).format('HH:mm a')} </p>
           <p>End: {clickEvent && moment(clickEvent.end).format('HH:mm a')} </p>
           
