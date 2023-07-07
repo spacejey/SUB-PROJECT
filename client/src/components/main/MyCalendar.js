@@ -17,6 +17,7 @@ const MyCalendar = () => {
   const [events, setEvents] = useState([])
   const [clickEvent, setClickEvent] = useState(null)
   const [error, setError] = useState()
+  console.log('clickEvent state=>', clickEvent)
 
   // User data On Mount
   useEffect(() => {
@@ -33,7 +34,7 @@ const MyCalendar = () => {
     }
     getUser()
   }, [])
-  
+    
   useEffect(() => {
     // Mark on Calendar
     const convertToCalendarEvent = (event, color) => {
@@ -41,10 +42,10 @@ const MyCalendar = () => {
       console.log('EVENT=>', event)
       return {
         start: new Date(date),
-        end: new Date(date),
+        end: new Date(date), 
         title: name,
         color: color,
-        image: image[0].url,
+        image: image,
       }
     }
     
@@ -93,7 +94,7 @@ const MyCalendar = () => {
           <Modal.Title>{clickEvent && clickEvent.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <img src={image} alt="" />
+          {/* <img src={image} alt="" /> */}
           <p>Start: {clickEvent && moment(clickEvent.start).format('HH:mm a')} </p>
           <p>End: {clickEvent && moment(clickEvent.end).format('HH:mm a')} </p>
           
