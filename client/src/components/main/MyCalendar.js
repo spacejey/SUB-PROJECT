@@ -17,7 +17,7 @@ const MyCalendar = () => {
   const [events, setEvents] = useState([])
   const [clickEvent, setClickEvent] = useState(null)
   const [error, setError] = useState()
-  console.log('clickEvent state=>', clickEvent)
+  const [likedEventIds, setLikedEventIds] = useState([])
 
   // User data On Mount
   useEffect(() => {
@@ -27,6 +27,8 @@ const MyCalendar = () => {
       try {
         const { data } = await authenticated.get(`/api/users/${loggedInUser()}/`)
         setUser(data)
+        const likedEventIds = data.liked.map(event => event.eventId)
+        setLikedEventIds(likedEventIds)
       } catch (err) {
         console.log(err)
         setError(err.message)
@@ -38,14 +40,16 @@ const MyCalendar = () => {
   useEffect(() => {
     // Mark on Calendar
     const convertToCalendarEvent = (event, color) => {
-      const { date, name, image } = event
-      console.log('EVENT=>', event)
+      const { eventId, date, name, image, link } = event
+
       return {
+        eventId: eventId,
         start: new Date(date),
         end: new Date(date), 
         title: name,
         color: color,
         image: image,
+        link: link,
       }
     }
     
@@ -65,14 +69,41 @@ const MyCalendar = () => {
 
   const handleEventClick = (e) => {
     setClickEvent(e)
-
   }
 
   const handleCloseModal = () => {
     setClickEvent(null)
   }
 
-  console.log(clickEvent)
+  const handleUnlikeEvent = async (e) => {
+    // 우리 데이터에 있는 이벤트 ID 가져와야함
+    console.log('E', e)
+    try {
+      const eventId = clickEvent.eventId
+  
+      await authenticated.put(`/api/users/${loggedInUser()}`)
+      // const userResponse = await authenticated.put(`/api/users/${loggedInUser()}/`, {
+      // 라이크: 라이크 ID
+      //   [field]: [eventArrayId],
+      // })
+      // console.log(`USER ${field.toUpperCase()} UPDATED =>`, userResponse)
+
+      setClickEvent(null)
+  
+      // 클릭한 이벤트의 eventId를 likedEventIds에서 제거
+      setLikedEventIds((prevLikedEventIds) =>
+        prevLikedEventIds.filter((id) => id !== eventId)
+      )
+  
+      // 클릭한 이벤트를 events에서 제거
+      setEvents((prevEvents) =>
+        prevEvents.filter((event) => event.eventId !== eventId)
+      )
+    } catch (err) {
+      console.log(err)
+      setError(err.message)
+    }
+  }
 
   return (
     // Calendar 
@@ -97,14 +128,12 @@ const MyCalendar = () => {
           <Modal.Title>{clickEvent && clickEvent.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {/* <img src={image} alt="" /> */}
           {clickEvent && <img src={clickEvent.image} alt="" /> }
           <p>Start: {clickEvent && moment(clickEvent.start).format('HH:mm a')} </p>
           <p>End: {clickEvent && moment(clickEvent.end).format('HH:mm a')} </p>
-          
-          {/* <p>Ticket Link: {clickEvent.url}</p> */}
         </Modal.Body>
         <Modal.Footer>
+          <Button onClick={handleUnlikeEvent}>Unlike</Button>
           <Button onClick={handleCloseModal}>Close</Button>
         </Modal.Footer>
       </Modal>
