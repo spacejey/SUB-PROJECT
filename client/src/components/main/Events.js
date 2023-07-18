@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { loggedInUser, authenticated } from '../../helpers/auth'
 
 // Date Package
@@ -36,6 +36,12 @@ const Events = () => {
   const [totalPages, setTotalPages] = useState([])
   const [pages, setPages] = useState([1, 2, 3])
 
+  const getUser = useCallback(async () => {
+    const { data } = await authenticated.get(`/api/users/${loggedInUser()}/`)
+    setBought(data.bought.map(event => event.eventId))
+    setLiked(data.liked.map(event => event.eventId))
+  }, [authenticated, loggedInUser, setBought, setLiked, bought, liked])
+
   useEffect(() => {
     const getData = async () => {
 
@@ -54,11 +60,6 @@ const Events = () => {
         console.log(error)
       }
     }
-    const getUser = async() => {
-      const { data } = await authenticated.get(`/api/users/${loggedInUser()}/`)
-      setBought(data.bought.map( event => event.eventId))
-      setLiked(data.liked.map( event => event.eventId))
-    }
     getUser()
     getData()
   }, [])
@@ -71,16 +72,17 @@ const Events = () => {
     e.preventDefault()
     if (!formFields.venue === '' ) {
       formFields.venue.replace('%20', ' ')
-      console.log(formFields.venue)
+
     } 
     if (!formFields.artist === '') {
       formFields.artist.replace('%20', ' ')
-      console.log(formFields.artist)
+
     } 
     console.log(formFields)
     try {
       const { data } = await axios.get( `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&keyword=${formFields.artist}%20${formFields.venue}&city=${formFields.city}&startDateTime=2023-06-21T15:31:00Z`)
       console.log(data)
+      setEvents(data._embedded.events)
     } catch (error){
       console.log(error)
     }
@@ -185,6 +187,7 @@ const Events = () => {
           <p>Date: {event.dates.start.localDate}</p>
           <p>Venue: {event._embedded.venues[0].name}</p>
           <LikeEvents
+            getUser={getUser}
             loggedInUser={loggedInUser}
             authenticated={authenticated}
             liked={liked}
