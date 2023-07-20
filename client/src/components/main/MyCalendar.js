@@ -17,7 +17,7 @@ const MyCalendar = () => {
   const [events, setEvents] = useState([])
   const [clickEvent, setClickEvent] = useState(null)
   const [error, setError] = useState()
-  console.log('clickEvent state=>', clickEvent)
+  const [likedEventIds, setLikedEventIds] = useState([])
 
   // User data On Mount
   useEffect(() => {
@@ -27,6 +27,8 @@ const MyCalendar = () => {
       try {
         const { data } = await authenticated.get(`/api/users/${loggedInUser()}/`)
         setUser(data)
+        const likedEventIds = data.liked.map(event => event.eventId)
+        setLikedEventIds(likedEventIds)
       } catch (err) {
         console.log(err)
         setError(err.message)
@@ -38,14 +40,16 @@ const MyCalendar = () => {
   useEffect(() => {
     // Mark on Calendar
     const convertToCalendarEvent = (event, color) => {
-      const { date, name, image } = event
-      console.log('EVENT=>', event)
+      const { eventId, date, name, image, link } = event
+
       return {
+        eventId: eventId,
         start: new Date(date),
         end: new Date(date), 
         title: name,
         color: color,
         image: image,
+        link: link,
       }
     }
     
@@ -65,14 +69,33 @@ const MyCalendar = () => {
 
   const handleEventClick = (e) => {
     setClickEvent(e)
-
   }
 
   const handleCloseModal = () => {
     setClickEvent(null)
   }
 
-  console.log(clickEvent)
+  const isEventLiked = (e) => {
+    return likedEventIds.includes(e.eventId)
+  }
+
+  const unlikedEvent = async () => {
+    try {
+      const eventId = clickEvent.eventId
+      await authenticated.put(`/api/users/${loggedInUser()}`, {
+        liked: likedEventIds.filter((id) => id !== eventId),
+      })
+      setLikedEventIds((prevLikedEventIds) =>
+        prevLikedEventIds.filter((id) => id !== eventId)
+      )
+      setEvents((prevEvents) =>
+        prevEvents.filter((event) => event.eventId !== eventId)
+      )
+      handleCloseModal()
+    } catch (err) {
+      setError(err.message)
+    }
+  }
 
   return (
     // Calendar 
@@ -97,12 +120,11 @@ const MyCalendar = () => {
           <Modal.Title>{clickEvent && clickEvent.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {/* <img src={image} alt="" /> */}
           {clickEvent && <img src={clickEvent.image} alt="" /> }
-          <p>Start: {clickEvent && moment(clickEvent.start).format('HH:mm a')} </p>
+          {clickEvent && isEventLiked(clickEvent) && (
+            <Button onClick={unlikedEvent}>Unlike</Button>
+          )}
           <p>End: {clickEvent && moment(clickEvent.end).format('HH:mm a')} </p>
-          
-          {/* <p>Ticket Link: {clickEvent.url}</p> */}
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={handleCloseModal}>Close</Button>
