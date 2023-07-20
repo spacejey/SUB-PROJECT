@@ -39,9 +39,20 @@ const Events = () => {
 
   const getUser = useCallback(async () => {
     const { data } = await authenticated.get(`/api/users/${loggedInUser()}/`)
+    console.log(data)
     setBought(data.bought.map(event => event.eventId))
     setLiked(data.liked.map(event => event.eventId))
   }, [authenticated, loggedInUser, setBought, setLiked, bought, liked])
+  
+  const getSavedEvents = useCallback( async () => {
+    try {
+      const response = await authenticated.get('api/events/')
+      console.log('saved events', response)
+      setSavedEvents( response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }, [authenticated, setSavedEvents, savedEvents])
 
   useEffect(() => {
     const getData = async () => {
@@ -50,7 +61,6 @@ const Events = () => {
         const { data } = await axios.get(
           `https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&segmentId=KZFzniwnSyZfZ7v7nJ&page=1&apikey=${process.env.REACT_APP_API_KEY}`
         )
-        console.log('data =>', data)
         setEvents(data._embedded.events)
         if (data.page.totalPages < 49) {
           setTotalPages(data.page.totalPages)
@@ -61,19 +71,11 @@ const Events = () => {
         console.log(error)
       }
     }
-    const getSavedEvents = async () => {
-      try {
-        const response = await authenticated.get('api/events/')
-        console.log('saved events', response)
-        setSavedEvents( response.data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
     getUser()
     getData()
     getSavedEvents()
   }, [])
+
 
 
   // Search Form Executions
@@ -113,13 +115,11 @@ const Events = () => {
       console.log(error)
     }
   }
-  console.log(formFields.date)
 
   const handleDate = (date) => {
     setFormFields({ ...formFields , date: date })
     setStartDate(date)
   }
-
   // Pagination Executions 
 
   const pageNumbers = (total, current) => {
@@ -132,7 +132,6 @@ const Events = () => {
 
   const handlePage = async (e) => {
     try {
-      console.log(typeof e.target.value)
       const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&page=${e.target.value}&apikey=${process.env.REACT_APP_API_KEY}`)
       setEvents(data._embedded.events)
     } catch (error) {
@@ -147,11 +146,15 @@ const Events = () => {
     setPages([1, 2, 3])
   }
 
+<<<<<<< HEAD
   console.log('bought->>', bought,'liked->>', liked)
 
   const uniqueLiked = new Set(liked)
   const uniqueBought = new Set(bought)
 
+=======
+  // console.log('bought->>', bought,'liked->>', liked)
+>>>>>>> 91aee07636f0f838c5ea01bbcc706d110b3a2dbb
   return (
     <>
       <h1>Events</h1>
@@ -202,6 +205,7 @@ const Events = () => {
           <p>Date: {event.dates.start.localDate}</p>
           <p>Venue: {event._embedded.venues[0].name}</p>
           <LikeEvents
+            getSavedEvents={getSavedEvents}
             savedEvents={savedEvents}
             getUser={getUser}
             loggedInUser={loggedInUser}
