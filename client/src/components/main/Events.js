@@ -146,15 +146,8 @@ const Events = () => {
     setPages([1, 2, 3])
   }
 
-<<<<<<< HEAD
   console.log('bought->>', bought,'liked->>', liked)
-
-  const uniqueLiked = new Set(liked)
-  const uniqueBought = new Set(bought)
-
-=======
-  // console.log('bought->>', bought,'liked->>', liked)
->>>>>>> 91aee07636f0f838c5ea01bbcc706d110b3a2dbb
+  
   return (
     <>
       <h1>Events</h1>
@@ -210,9 +203,9 @@ const Events = () => {
             getUser={getUser}
             loggedInUser={loggedInUser}
             authenticated={authenticated}
-            liked={Array.from(uniqueLiked)}
+            liked={liked}
             setLiked={setLiked}
-            bought={Array.from(uniqueBought)}
+            bought={bought}
             setBought={setBought}
             eventId={ event.id }
             name={ event.name }
