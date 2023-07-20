@@ -20,7 +20,6 @@ const LikeEvents = ({ savedEvents, getUser, loggedInUser, authenticated , liked,
   // ! PROBLEM 2 : user can like and buy event simultaneously
   
   const handleEvent = async (type) => {
-    setClickRecord(!clickRecord)
 
     // function for updating user model with liked or bought data
     const updateLikedOrBoughtData = async (field,array) => {
@@ -79,7 +78,7 @@ const LikeEvents = ({ savedEvents, getUser, loggedInUser, authenticated , liked,
           // else , post and update
 
 
-        } else if ( savedEvents.includes( event => event.eventId === eventId)) {
+        } else if ( savedEvents.some( event => event.eventId === eventId)) {
           const event = savedEvents.find( event => event.eventId === eventId)
           await updateLikedOrBoughtData('bought', event.id)
           console.log('updated but not posted')

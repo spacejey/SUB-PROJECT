@@ -148,6 +148,10 @@ const Events = () => {
   }
 
   console.log('bought->>', bought,'liked->>', liked)
+
+  const uniqueLiked = new Set(liked)
+  const uniqueBought = new Set(bought)
+
   return (
     <>
       <h1>Events</h1>
@@ -202,9 +206,9 @@ const Events = () => {
             getUser={getUser}
             loggedInUser={loggedInUser}
             authenticated={authenticated}
-            liked={liked}
+            liked={Array.from(uniqueLiked)}
             setLiked={setLiked}
-            bought={bought} 
+            bought={Array.from(uniqueBought)}
             setBought={setBought}
             eventId={ event.id }
             name={ event.name }
