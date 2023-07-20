@@ -5,3 +5,4 @@ class EventSerializer(ModelSerializer):
     class Meta:
         model = Event
         fields = '__all__'
+
