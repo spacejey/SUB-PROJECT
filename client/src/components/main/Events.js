@@ -19,6 +19,7 @@ const Events = () => {
   const [userError, setUserError] = useState('')
   const [ liked, setLiked] = useState([])
   const [ bought, setBought] = useState([])
+  const [savedEvents, setSavedEvents] = useState([])
 
   // Form 
   const [formFields, setFormFields] = useState({
@@ -60,8 +61,18 @@ const Events = () => {
         console.log(error)
       }
     }
+    const getSavedEvents = async () => {
+      try {
+        const response = await authenticated.get('api/events/')
+        console.log('saved events', response)
+        setSavedEvents( response.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
     getUser()
     getData()
+    getSavedEvents()
   }, [])
 
 
@@ -136,7 +147,7 @@ const Events = () => {
     setPages([1, 2, 3])
   }
 
-
+  console.log('bought->>', bought,'liked->>', liked)
   return (
     <>
       <h1>Events</h1>
@@ -187,6 +198,7 @@ const Events = () => {
           <p>Date: {event.dates.start.localDate}</p>
           <p>Venue: {event._embedded.venues[0].name}</p>
           <LikeEvents
+            savedEvents={savedEvents}
             getUser={getUser}
             loggedInUser={loggedInUser}
             authenticated={authenticated}
