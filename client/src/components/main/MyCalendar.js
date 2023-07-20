@@ -79,18 +79,27 @@ const MyCalendar = () => {
     return likedEventIds.includes(e.eventId)
   }
 
-  const unlikedEvent = async () => {
+  const unlikeEvent = async () => {
     try {
       const eventId = clickEvent.eventId
-      await authenticated.put(`/api/users/${loggedInUser()}`, {
-        liked: likedEventIds.filter((id) => id !== eventId),
-      })
-      setLikedEventIds((prevLikedEventIds) =>
-        prevLikedEventIds.filter((id) => id !== eventId)
-      )
-      setEvents((prevEvents) =>
-        prevEvents.filter((event) => event.eventId !== eventId)
-      )
+  
+      // Check if the event to be unliked is a liked event
+      if (clickEvent.type === 'liked') {
+        // Make API call to update liked events in the backend
+        await authenticated.put(`/api/users/${loggedInUser()}`, {
+          liked: likedEventIds.filter((id) => id !== eventId),
+        })
+  
+        // Update the state arrays to reflect the unliked event
+        setLikedEventIds((prevLikedEventIds) =>
+          prevLikedEventIds.filter((id) => id !== eventId)
+        )
+  
+        setEvents((prevEvents) =>
+          prevEvents.filter((event) => event.eventId !== eventId)
+        )
+      }
+  
       handleCloseModal()
     } catch (err) {
       setError(err.message)
@@ -122,8 +131,9 @@ const MyCalendar = () => {
         <Modal.Body>
           {clickEvent && <img src={clickEvent.image} alt="" /> }
           {clickEvent && isEventLiked(clickEvent) && (
-            <Button onClick={unlikedEvent}>Unlike</Button>
+            <Button onClick={unlikeEvent}>Unlike</Button>
           )}
+          <p>Start: {clickEvent && moment(clickEvent.start).format('HH:mm a')} </p>
           <p>End: {clickEvent && moment(clickEvent.end).format('HH:mm a')} </p>
         </Modal.Body>
         <Modal.Footer>
