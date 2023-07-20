@@ -17,15 +17,12 @@ const LikeEvents = ({ getSavedEvents, savedEvents, getUser, loggedInUser, authen
   }
 
   // ! PROBLEM 1 : eventId is added twice to liked or bought before the put method kicks in , it's posting a duplicate , so it's reaching the post request in the conditional when it shouldn't be, why?
-  //! FIXED - added savedEvents state to check against, and changed the includes method to some method.   
+  // ! FIXED - added savedEvents state to check against, and changed the includes method to some method.  
+
   // ! PROBLEM 2 : user can like and buy event simultaneously
   
   // ! TO DO, change event model , eventId unique = True
   // ! REFACTOR - lots of duplicate stuff 
-
-  const useEffect = (() => {
-    getSavedEvents()
-  },[liked,bought, setLiked, setBought])
 
   const handleEvent = async (type) => {
 
@@ -58,29 +55,35 @@ const LikeEvents = ({ getSavedEvents, savedEvents, getUser, loggedInUser, authen
     
     // function to check if a given event is in either liked or bought 
     const checkEvent = (array,eventId) => {
-
-      return array.find( event => event.eventId === eventId)
+      console.log('array->', array, 'EventId', eventId, array.includes(eventId))
+      return array.some( event => event.eventId === eventId)
     }
     
     try {
       
       if (type === 'like') { 
-        // ^If user clicks like ^
-        console.log(liked.includes(eventId), eventId)
-        //  If the liked event has already been liked , send put request to remove event from liked array
-        if (liked.includes(eventId)) {
+        // If the event has already been liked , send put request to remove event from liked array
+        if (liked.includes(eventId)){
           removeEvent('liked')
-          
-          
-        
-          // else add event to the liked array on logged in user model, then use getUser() to update liked and bought state 
+          getUser()
 
-        } else {
+          // else if event is already in events, just update
+          // else , post and update
+
+        } else if ( savedEvents.some( event => event.eventId === eventId)) {
+          const event = savedEvents.find( event => event.eventId === eventId)
+          await updateLikedOrBoughtData('liked', event.id)
+          console.log('updated but not posted')
+          getUser()
+          
+        } else  {
+          console.log(savedEvents)
           const response = await authenticated.post('/api/events/', eventData)
-          console.log(response)
-          await updateLikedOrBoughtData('liked',response.data.id )
+          console.log(savedEvents.includes( event => event.eventId === eventId))
+          await updateLikedOrBoughtData('liked', response.data.id)
+          console.log('updated and posted liked')
+          getUser()
           getSavedEvents()
-          console.log('posted like')
         }
 
         // If user clicks buy
@@ -112,7 +115,7 @@ const LikeEvents = ({ getSavedEvents, savedEvents, getUser, loggedInUser, authen
       } else {
         console.log( 'fallback')
       }
-      console.log(checkEvent( bought, eventId) , checkEvent( liked, eventId) )
+      checkEvent( bought, eventId) , checkEvent( liked, eventId) 
     } catch (err) {
       console.log(err)
     }
