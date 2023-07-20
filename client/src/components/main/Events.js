@@ -146,7 +146,8 @@ const Events = () => {
     setPages([1, 2, 3])
   }
 
-  // console.log('bought->>', bought,'liked->>', liked)
+  console.log('bought->>', bought,'liked->>', liked)
+  
   return (
     <>
       <h1>Events</h1>
@@ -204,7 +205,7 @@ const Events = () => {
             authenticated={authenticated}
             liked={liked}
             setLiked={setLiked}
-            bought={bought} 
+            bought={bought}
             setBought={setBought}
             eventId={ event.id }
             name={ event.name }

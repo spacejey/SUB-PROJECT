@@ -26,7 +26,6 @@ const LikeEvents = ({ getSavedEvents, savedEvents, getUser, loggedInUser, authen
 
   const handleEvent = async (type) => {
 
-
     // function for updating user model with liked or bought data
     const updateLikedOrBoughtData = async (field,array) => {
 
