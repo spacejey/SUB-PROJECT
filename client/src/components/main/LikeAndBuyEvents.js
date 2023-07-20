@@ -17,10 +17,11 @@ const LikeEvents = ({ getSavedEvents, savedEvents, getUser, loggedInUser, authen
   }
 
   // ! PROBLEM 1 : eventId is added twice to liked or bought before the put method kicks in , it's posting a duplicate , so it's reaching the post request in the conditional when it shouldn't be, why?
-
+  //! FIXED - added savedEvents state to check against, and changed the includes method to some method.   
   // ! PROBLEM 2 : user can like and buy event simultaneously
   
   // ! TO DO, change event model , eventId unique = True
+  // ! REFACTOR - lots of duplicate stuff 
 
   const useEffect = (() => {
     getSavedEvents()
