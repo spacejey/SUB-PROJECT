@@ -75,32 +75,24 @@ const MyCalendar = () => {
     setClickEvent(null)
   }
 
-  const handleUnlikeEvent = async (e) => {
-    // 우리 데이터에 있는 이벤트 ID 가져와야함
-    console.log('E', e)
+  const isEventLiked = (e) => {
+    return likedEventIds.includes(e.eventId)
+  }
+
+  const unlikedEvent = async () => {
     try {
       const eventId = clickEvent.eventId
-  
-      await authenticated.put(`/api/users/${loggedInUser()}`)
-      // const userResponse = await authenticated.put(`/api/users/${loggedInUser()}/`, {
-      // 라이크: 라이크 ID
-      //   [field]: [eventArrayId],
-      // })
-      // console.log(`USER ${field.toUpperCase()} UPDATED =>`, userResponse)
-
-      setClickEvent(null)
-  
-      // 클릭한 이벤트의 eventId를 likedEventIds에서 제거
+      await authenticated.put(`/api/users/${loggedInUser()}`, {
+        liked: likedEventIds.filter((id) => id !== eventId),
+      })
       setLikedEventIds((prevLikedEventIds) =>
         prevLikedEventIds.filter((id) => id !== eventId)
       )
-  
-      // 클릭한 이벤트를 events에서 제거
       setEvents((prevEvents) =>
         prevEvents.filter((event) => event.eventId !== eventId)
       )
+      handleCloseModal()
     } catch (err) {
-      console.log(err)
       setError(err.message)
     }
   }
@@ -129,11 +121,12 @@ const MyCalendar = () => {
         </Modal.Header>
         <Modal.Body>
           {clickEvent && <img src={clickEvent.image} alt="" /> }
-          <p>Start: {clickEvent && moment(clickEvent.start).format('HH:mm a')} </p>
+          {clickEvent && isEventLiked(clickEvent) && (
+            <Button onClick={unlikedEvent}>Unlike</Button>
+          )}
           <p>End: {clickEvent && moment(clickEvent.end).format('HH:mm a')} </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={handleUnlikeEvent}>Unlike</Button>
           <Button onClick={handleCloseModal}>Close</Button>
         </Modal.Footer>
       </Modal>
