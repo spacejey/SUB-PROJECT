@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
+import { loggedInUser, authenticated } from '../../helpers/auth'
 
 // Date Package
 import DatePicker from 'react-datepicker'
@@ -18,6 +19,9 @@ const Events = () => {
   const [userError, setUserError] = useState('')
   const [venues, setVenues] = useState([])
   const [venueInput, setVenueInput] = useState('')
+  const [ liked, setLiked] = useState([])
+  const [ bought, setBought] = useState([])
+  const [savedEvents, setSavedEvents] = useState([])
 
   // Form State
   const [formFields, setFormFields] = useState({
@@ -35,6 +39,46 @@ const Events = () => {
   const [totalPages, setTotalPages] = useState(null)
   const [pages, setPages] = useState([])
   
+
+  const getUser = useCallback(async () => {
+    const { data } = await authenticated.get(`/api/users/${loggedInUser()}/`)
+    console.log(data)
+    setBought(data.bought.map(event => event.eventId))
+    setLiked(data.liked.map(event => event.eventId))
+  }, [authenticated, loggedInUser, setBought, setLiked, bought, liked])
+  
+  const getSavedEvents = useCallback( async () => {
+    try {
+      const response = await authenticated.get('api/events/')
+      console.log('saved events', response)
+      setSavedEvents( response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }, [authenticated, setSavedEvents, savedEvents])
+
+  useEffect(() => {
+    const getData = async () => {
+
+      try {
+        const { data } = await axios.get(
+          `https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&segmentId=KZFzniwnSyZfZ7v7nJ&page=1&apikey=${process.env.REACT_APP_API_KEY}`
+        )
+        setEvents(data._embedded.events)
+        if (data.page.totalPages < 49) {
+          setTotalPages(data.page.totalPages)
+        } else {
+          setTotalPages(49)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getUser()
+    getData()
+    getSavedEvents()
+  }, [])
+
 
 
   // Search Form Executions
@@ -186,6 +230,8 @@ const Events = () => {
     pageNumbers(totalPages, 0)
   }
 
+  console.log('bought->>', bought,'liked->>', liked)
+  
   return (
     <>
       <h1>Events</h1>
@@ -254,6 +300,15 @@ const Events = () => {
           <p>Date: {event.dates.start.localDate}</p>
           <p>Venue: {event._embedded.venues[0].name}</p>
           <LikeEvents
+            getSavedEvents={getSavedEvents}
+            savedEvents={savedEvents}
+            getUser={getUser}
+            loggedInUser={loggedInUser}
+            authenticated={authenticated}
+            liked={liked}
+            setLiked={setLiked}
+            bought={bought}
+            setBought={setBought}
             eventId={ event.id }
             name={ event.name }
             date= {`${event.dates.start.localDate }T${event.dates.start.localTime }Z`}
