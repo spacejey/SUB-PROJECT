@@ -19,7 +19,7 @@ const LikeEvents = ({ getSavedEvents, savedEvents, getUser, loggedInUser, authen
   // ! PROBLEM 1 : eventId is added twice to liked or bought before the put method kicks in , it's posting a duplicate , so it's reaching the post request in the conditional when it shouldn't be, why?
   // ! FIXED - added savedEvents state to check against, and changed the includes method to some method.  
 
-  // ! PROBLEM 2 : user can like and buy event simultaneously
+  // ! PROBLEM 2 : user can like and buy event simultaneously -  DONE
   
   // ! TO DO, change event model , eventId unique = True
   // ! REFACTOR - lots of duplicate stuff 
@@ -53,16 +53,17 @@ const LikeEvents = ({ getSavedEvents, savedEvents, getUser, loggedInUser, authen
     }
     
     // function to check if a given event is in either liked or bought 
-    const checkEvent = (array,eventId) => {
-      console.log('array->', array, 'EventId', eventId, array.includes(eventId))
-      return array.some( event => event.eventId === eventId)
+    const checkIfEventInOtherArray = (array,eventId) => {
+      return array.includes(eventId)
     }
     
     try {
       
       if (type === 'like') { 
+        if ( checkIfEventInOtherArray( bought, eventId )) {
+          console.log('in bought')
         // If the event has already been liked , send put request to remove event from liked array
-        if (liked.includes(eventId)){
+        } else if (liked.includes(eventId)){
           removeEvent('liked')
           getUser()
 
@@ -88,8 +89,11 @@ const LikeEvents = ({ getSavedEvents, savedEvents, getUser, loggedInUser, authen
         // If user clicks buy
 
       } else if (type === 'buy') {
+        if (checkIfEventInOtherArray( liked, eventId)) {
+          console.log('in liked')
+        
         // If the event has already been bought , send put request to remove event from bought array
-        if (bought.includes(eventId)){
+        } else if (bought.includes(eventId)){
           removeEvent('bought')
           getUser()
 
@@ -114,7 +118,6 @@ const LikeEvents = ({ getSavedEvents, savedEvents, getUser, loggedInUser, authen
       } else {
         console.log( 'fallback')
       }
-      checkEvent( bought, eventId) , checkEvent( liked, eventId) 
     } catch (err) {
       console.log(err)
     }

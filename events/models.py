@@ -3,7 +3,7 @@ from django.core.validators import URLValidator
 
 # Create your models here.
 class Event(models.Model):
-    eventId = models.CharField(max_length=100, default='default')
+    eventId = models.CharField(max_length=100, default='default', unique= True)
     name = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now_add=False)
     image = models.URLField(validators=[URLValidator()], blank = True)
