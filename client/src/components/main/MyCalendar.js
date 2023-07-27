@@ -40,9 +40,10 @@ const MyCalendar = () => {
   useEffect(() => {
     // Mark on Calendar
     const convertToCalendarEvent = (event, color) => {
-      const { eventId, date, name, image, link } = event
+      const { eventId, date, name, image, link, id } = event
 
       return {
+        id: id,
         eventId: eventId,
         start: new Date(date),
         end: new Date(date), 
@@ -79,11 +80,12 @@ const MyCalendar = () => {
     return likedEventIds.includes(e.eventId)
   }
 
+  console.log(clickEvent)
   const unlikedEvent = async () => {
     try {
       const eventId = clickEvent.eventId
-      await authenticated.put(`/api/users/${loggedInUser()}`, {
-        liked: likedEventIds.filter((id) => id !== eventId),
+      await authenticated.put(`/api/users/${loggedInUser()}/`, {
+        liked: likedEventIds.filter((id) => id !== id),
       })
       setLikedEventIds((prevLikedEventIds) =>
         prevLikedEventIds.filter((id) => id !== eventId)
