@@ -19,8 +19,8 @@ const Events = () => {
   const [userError, setUserError] = useState('')
   const [venues, setVenues] = useState([])
   const [venueInput, setVenueInput] = useState('')
-  const [ liked, setLiked] = useState([])
-  const [ bought, setBought] = useState([])
+  const [liked, setLiked] = useState([])
+  const [bought, setBought] = useState([])
   const [savedEvents, setSavedEvents] = useState([])
 
   // Form State
@@ -58,24 +58,7 @@ const Events = () => {
   }, [authenticated, setSavedEvents, savedEvents])
 
   useEffect(() => {
-    const getData = async () => {
-
-      try {
-        const { data } = await axios.get(
-          `https://app.ticketmaster.com/discovery/v2/events.json?locale=*&countryCode=GB&segmentId=KZFzniwnSyZfZ7v7nJ&page=1&apikey=${process.env.REACT_APP_API_KEY}`
-        )
-        setEvents(data._embedded.events)
-        if (data.page.totalPages < 49) {
-          setTotalPages(data.page.totalPages)
-        } else {
-          setTotalPages(49)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
     getUser()
-    getData()
     getSavedEvents()
   }, [])
 
@@ -203,7 +186,7 @@ const Events = () => {
       setPages([current - 3, current - 2, current - 1, current])
     } else if (current > total - 3){
       setPages([total - 3, total - 2, total - 1 , total])
-    } else if ( current === 0 ){
+    } else if ( current === 0) {
       setPages([current , current + 1 , current + 2 , '...', total])
     } else {
       setPages([current - 1 , current , current + 1, '...', total])
