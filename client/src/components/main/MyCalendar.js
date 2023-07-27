@@ -93,11 +93,32 @@ const MyCalendar = () => {
       setEvents((prevEvents) =>
         prevEvents.filter((event) => event.eventId !== eventId)
       )
+      
       handleCloseModal()
     } catch (err) {
       setError(err.message)
     }
   }
+  // const unlikeEvent = async () => {
+  //   try {
+  //     const eventId = clickEvent.eventId
+  
+  //     // Check if the event to be unliked is a liked event
+  //     if (clickEvent.type === 'liked') {
+  //       // Make API call to update liked events in the backend
+  //       await authenticated.put(`/api/users/${loggedInUser()}`, {
+  //         liked: likedEventIds.filter((id) => id !== eventId),
+  //       })
+  
+  //       // Update the state arrays to reflect the unliked event
+  //       setLikedEventIds((prevLikedEventIds) =>
+  //         prevLikedEventIds.filter((id) => id !== eventId)
+  //       )
+  
+  //       setEvents((prevEvents) =>
+  //         prevEvents.filter((event) => event.eventId !== eventId)
+  //       )
+  //     }
 
   return (
     // Calendar 
@@ -126,6 +147,7 @@ const MyCalendar = () => {
           {clickEvent && isEventLiked(clickEvent) && (
             <Button onClick={unlikedEvent}>Unlike</Button>
           )}
+          <p>Start: {clickEvent && moment(clickEvent.start).format('HH:mm a')} </p>
           <p>End: {clickEvent && moment(clickEvent.end).format('HH:mm a')} </p>
         </Modal.Body>
         <Modal.Footer>

@@ -69,7 +69,7 @@ class UserSingleView(APIView):
         return Response(serialized_user.data)
     
     @exceptions
-    def put(self, request, pk):
+    def put(self, request, pk ):
         user = User.objects.get(pk=pk)
         serialized_user = UserEventsSerializer(user)
         bought_events = serialized_user.data['bought']
