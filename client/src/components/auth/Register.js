@@ -20,11 +20,20 @@ function Register() {
     passwordConfirmation: '',
   })
   const [ registerError, setRegisterError ] = useState('')
+  // Error State
+  const [emailError, setEmailError] = useState('')
+  const [usernameError, setUsernameError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [passwordConfirmationError, setPasswordConfirmationError] = useState('')
 
   // ! Executions
   const handleChange = (e) => {
     setFormFields({ ...formFields, [e.target.name]: e.target.value })
-    setRegisterError('')
+    // setRegisterError('')
+    setUsernameError('')
+    setEmailError('')
+    setPasswordConfirmationError('')
+    setPasswordError('')
   }
 
   const handleSubmit = async (e) => {
@@ -34,8 +43,12 @@ function Register() {
       console.log(data)
       navigate('/login')
     } catch (err) {
-      console.log(err)
+      console.log(err.response)
       setRegisterError(err.message)
+      setEmailError(err.response.data.detail.email)
+      setUsernameError(err.response.data.detail.username)
+      setPasswordError(err.response.data.detail.password)
+      setPasswordConfirmationError(err.response.data.detail.password_confirmation)
     }
   }
 
@@ -57,7 +70,9 @@ function Register() {
             className='form-control'
           />
         </Form.Group>
-
+        { usernameError && 
+          <div className="text-danger register-login-error"> {usernameError} </div>
+        }
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
@@ -69,7 +84,9 @@ function Register() {
             className='form-control'
           />
         </Form.Group>
-
+        { emailError && 
+          <div className="text-danger register-login-error"> {emailError} </div>
+        }
         <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
@@ -81,7 +98,9 @@ function Register() {
             className='form-control'
           />
         </Form.Group>
-
+        { passwordError && 
+          <div className="text-danger register-login-error"> {passwordError} </div>
+        }
         <Form.Group className="mb-3" controlId="formBasicPasswordConfirmation">
           <Form.Label>Password Confirmation</Form.Label>
           <Form.Control
@@ -92,10 +111,12 @@ function Register() {
             onChange={handleChange}
           />
         </Form.Group>
-
+        { passwordConfirmationError && 
+          <div className="text-danger register-login-error"> {passwordConfirmationError} </div>
+        }
         <Button variant="primary" type="submit" className='submit'>Submit</Button>
         {registerError && (
-          <p className="text-danger text-center register-login-error">{registerError}</p>
+          <p className="text-danger register-login-error">{registerError}</p>
         )}
       </Form>
 

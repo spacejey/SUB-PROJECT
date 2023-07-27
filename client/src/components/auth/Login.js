@@ -69,6 +69,8 @@ const Login = () => {
         </Form.Group>
         <Button variant="primary" type="submit" className='submit'>Submit</Button>
       </Form>
+      { loginError && 
+      <div> {loginError} </div>}
 
     </div>
   )

@@ -15,8 +15,6 @@ import LikeEvents from './LikeAndBuyEvents'
 
 const Events = () => {
   const [events, setEvents] = useState([])
-  const [user, setUser] = useState([])
-  const [userError, setUserError] = useState('')
   const [venues, setVenues] = useState([])
   const [venueInput, setVenueInput] = useState('')
   const [liked, setLiked] = useState([])
@@ -42,7 +40,7 @@ const Events = () => {
 
   const getUser = useCallback(async () => {
     const { data } = await authenticated.get(`/api/users/${loggedInUser()}/`)
-    console.log(data)
+    // console.log(data)
     setBought(data.bought.map(event => event.eventId))
     setLiked(data.liked.map(event => event.eventId))
   }, [authenticated, loggedInUser, setBought, setLiked, bought, liked])
@@ -50,7 +48,7 @@ const Events = () => {
   const getSavedEvents = useCallback( async () => {
     try {
       const response = await authenticated.get('api/events/')
-      console.log('saved events', response)
+      // console.log('saved events', response)
       setSavedEvents( response.data)
     } catch (error) {
       console.log(error)
@@ -76,9 +74,8 @@ const Events = () => {
       console.log(formFields.artist)
     }
     try {
-      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}${formFields.artist ? formFields.artist : ''}${formFields.venue ? formFields.venue : '' }&locale=*${formFields.date ? formFields.date : ''}${formFields.city ? formFields.city : ''}${formFields.genre ? formFields.genre : '' }`)
+      const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&keyword=${formFields.artist ? formFields.artist : ''}${formFields.venue ? formFields.venue : '' }&locale=*&countryCode=GB${formFields.date ? formFields.date : ''}${formFields.city ? formFields.city : ''}${formFields.genre ? formFields.genre : '' }`)
       setEvents(data._embedded.events)
-      console.log(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}${formFields.artist ? formFields.artist : ''}${formFields.venue ? formFields.venue : '' }&locale=*${formFields.date ? formFields.date : ''}${formFields.city ? formFields.city : ''}${formFields.genre ? formFields.genre : '' }`)
       if (data.page.totalPages < 49) {
         setTotalPages(data.page.totalPages)
       } else {
@@ -88,7 +85,7 @@ const Events = () => {
       console.log(error)
     }
     setVenueInput('')
-    setFormFields({ ...formFields, artist: '' })
+    // setFormFields({ ...formFields, artist: '' })
   }
   useEffect(() => {
     pageNumbers( totalPages, 0)
@@ -97,7 +94,7 @@ const Events = () => {
 
   // Handle Artist Text
   const handleChange = (e) => {
-    setFormFields({ ...formFields, [e.target.name]: `&keyword= ${e.target.value}` })
+    setFormFields({ ...formFields, [e.target.name]: e.target.value })
     setFormError('')
   }
 
@@ -193,10 +190,6 @@ const Events = () => {
     }
   }
 
-  useEffect(() => {
-
-  }, [])
-
   const handlePage = async (e) => {
     try {
       const { data } = await axios.get(`https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.REACT_APP_API_KEY}&page=${e.target.value}${formFields.artist ? formFields.artist : ''}${formFields.venue ? formFields.venue : '' }&locale=*${formFields.date ? formFields.date : ''}${formFields.city ? formFields.city : ''}${formFields.genre ? formFields.genre : '' }`)
@@ -212,8 +205,6 @@ const Events = () => {
     setEvents(data._embedded.events)
     pageNumbers(totalPages, 0)
   }
-
-  console.log('bought->>', bought,'liked->>', liked)
   
   return (
     <>
